@@ -1,0 +1,76 @@
+TU WEB: GUÍA RÁPIDA
+===================
+
+QUÉ HAY EN LA CARPETA
+  index.html   La página. Doble clic para verla en tu ordenador.
+  images/      Fotos.
+  videos/      Vídeos.
+
+CÓMO EDITAR TEXTOS, ENLACES, FOTOS Y VÍDEOS
+-------------------------------------------
+1. Abre index.html con un editor de texto (el Bloc de notas vale; mejor Visual Studio Code, gratis).
+2. Busca la línea que dice  EDITA AQUÍ  (está hacia el final del archivo).
+3. Ahí está TODO lo que cambias. Cada línea tiene el texto entre comillas "así".
+   Cambia solo lo que hay dentro de las comillas y no borres las comas del final.
+4. Guarda (Ctrl+S) y abre index.html para ver el resultado.
+
+Qué cambiar en ese bloque:
+  marca          Tu nombre (esquina superior izquierda y pie).
+  instagram      Solo tu usuario, sin @ ni https. Ejemplo: "alexsuarezfoto"
+  email          Tu correo.
+  titulo1/2      Titular de la portada (el 2 sale en cursiva).
+  frase...       Frase de la portada.
+  trabajos       Tus vídeos (ver abajo).
+  fotos          Tus fotos del carrusel (ver abajo).
+  sobreTexto1/2  Texto de "Sobre mí".
+  datos          Los 3 números de "Sobre mí".
+Una palabra en cursiva: ponla entre asteriscos, *así*.
+
+CAMBIAR UNA FOTO
+  Opción A (la más fácil): pon tu foto en la carpeta images/ con el MISMO nombre
+  que la de relleno (por ejemplo foto-01.jpg) y sobrescribe.
+  Opción B: usa otro nombre y cámbialo en el bloque EDITA AQUÍ, en la línea de esa foto.
+  Añadir una foto: copia una línea de "fotos" y cambia el nombre del archivo (y pon coma entre líneas).
+
+PONER UN VÍDEO
+  Cada vídeo necesita 3 archivos en la carpeta videos/ e images/:
+    videos/video-1-preview.mp4   Clip corto de 5 a 10 s, 1080p, SIN sonido. Se reproduce solo.
+    videos/video-1-4k.mp4        El vídeo completo (máx. 1 min). Se abre al pulsar, con sonido.
+    images/poster-1.jpg          Una foto del vídeo (se ve mientras carga).
+  Para añadir un quinto vídeo, copia un bloque { titulo: ..., poster: ... } en "trabajos",
+  pon una coma entre bloques y cambia los nombres de archivo.
+
+PORTADA
+  videos/portada.mp4 (clip de 5 a 10 s, 1080p, sin sonido) y images/poster-portada.jpg.
+
+FOTO PARA COMPARTIR EL ENLACE
+  images/social.jpg (1200 x 630). Es la imagen que sale al pegar el enlace en Instagram o WhatsApp.
+  En index.html, arriba del todo, comprueba que la línea og:image lleva tu dirección de GitHub Pages.
+
+TAMAÑOS RECOMENDADOS (comprimir sí es necesario)
+------------------------------------------------
+  Fotos                   JPG, 2000 px en el lado largo, 300 a 600 KB (máx. 1 MB).
+  Retrato / social        JPG, menos de 500 KB.
+  Portada (clip)          MP4 1080p sin sonido, menos de 8 MB.
+  Preview de cada vídeo   MP4 1080p sin sonido, 3 a 6 MB (máx. 8 MB).
+  Vídeo completo 4K       MP4 H.264, unos 10 Mbps: 60 a 75 MB por minuto (máx. 100 MB).
+  Toda la carpeta         Mejor por debajo de 1 GB.
+
+LÍMITES DE GITHUB
+  - Un archivo no puede pasar de 100 MB.
+  - Desde el navegador solo se suben archivos de hasta 25 MB: para los 4K usa GitHub Desktop.
+  - Tráfico orientativo: unos 100 GB al mes.
+
+COMPRIMIR CON HANDBRAKE (gratis, handbrake.fr)
+  Vídeo completo 4K:  preset "Super HQ 2160p60 4K H.264", bitrate 10000 kbps, 2 pasadas,
+                      audio AAC 128 kbps, marcar "Web Optimized".
+  Clip corto:         preset "Fast 1080p30", calidad RF 28, quitar el audio, recortar a 5 a 10 s.
+
+CON FFMPEG (línea de comandos)
+  ffmpeg -i entrada.mp4 -vf scale=-2:2160 -c:v libx264 -b:v 10M -maxrate 12M -bufsize 20M -preset slow -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart video-1-4k.mp4
+  ffmpeg -i entrada.mp4 -t 8 -vf scale=-2:1080 -c:v libx264 -crf 28 -preset slow -pix_fmt yuv420p -an -movflags +faststart video-1-preview.mp4
+
+ACTUALIZAR LA WEB YA PUBLICADA
+  1. Cambia los archivos en tu copia local del repositorio (la carpeta que clonó GitHub Desktop).
+  2. En GitHub Desktop escribe un resumen (por ejemplo "Nuevo diseño"), pulsa Commit to main y luego Push origin.
+  3. En 1 o 2 minutos se actualiza el enlace. Si no ves el cambio, recarga con Ctrl+F5.
