@@ -607,12 +607,24 @@ html.paused .rec i { animation: none; }
   <section class="hero" id="inicio">
     <video id="hero-video" muted loop playsinline preload="auto" aria-hidden="true"></video>
     <script>
-    /* Vídeo de portada: en móvil se carga una versión vertical y pequeña (unos 5 MB); con el ahorro de datos o una conexión lenta solo se ve la foto */
+    /* Vídeo de portada: se elige por la forma del recuadro. Recuadro vertical (móvil) = versión vertical y pequeña (unos 7 MB);
+       recuadro horizontal (ordenador, móvil girado o "sitio para ordenadores") = versión horizontal. Con el ahorro de datos
+       o una conexión lenta solo se ve la foto. Si se gira el aparato, se cambia sola. */
     (function () {
-      var v = document.getElementById('hero-video'), c = navigator.connection || {}, m = window.matchMedia('(max-width:760px), (max-aspect-ratio: 1/1)').matches;
-      v.poster = 'images/poster-portada' + (m ? '-m' : '') + '.jpg';
-      if (c.saveData || /^(slow-)?2g$/.test(c.effectiveType || '')) return;
-      v.src = 'videos/portada' + (m ? '-m' : '') + '.mp4'; v.autoplay = true;
+      var v = document.getElementById('hero-video'), hero = v.parentNode, c = navigator.connection || {}, cur = null;
+      var slow = !!c.saveData || /^(slow-)?2g$/.test(c.effectiveType || '');
+      function vertical() { var r = hero.getBoundingClientRect(); return r.height > 0 ? r.width / r.height < 1.2 : window.matchMedia('(max-width:760px)').matches; }
+      function pick() {
+        var m = vertical(); if (m === cur) return;
+        var first = cur === null; cur = m;
+        v.poster = 'images/poster-portada' + (m ? '-m' : '') + '.jpg';
+        if (slow) return;
+        v.src = 'videos/portada' + (m ? '-m' : '') + '.mp4';
+        if (first) v.autoplay = true;
+        else if (!document.documentElement.classList.contains('paused')) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      }
+      pick();
+      var t = 0; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(pick, 250); });
     })();
     </script>
     <img class="poster" src="images/poster-portada.jpg" srcset="images/poster-portada-m.jpg 540w, images/poster-portada.jpg 1920w" sizes="(max-width: 760px) 10px, 1920px" alt="" width="1920" height="1080" decoding="async">
@@ -992,13 +1004,13 @@ html.paused .rec i { animation: none; }
   /* Los vídeos de las tarjetas no se descargan hasta que están cerca de la pantalla (y en móvil se pide la versión pequeña) */
   function ensureSrc(v) {
     if (v.getAttribute('src') || !v.getAttribute('data-src')) return;
-    v.src = (isMv() && v.getAttribute('data-src-m')) || v.getAttribute('data-src');
+    v.src = ((isMv() || isPhone()) && v.getAttribute('data-src-m')) || v.getAttribute('data-src');
     var card = v.parentNode;
     if (card && card.classList) v.addEventListener('playing', function () { card.classList.add('is-ready'); }, { once: true });
   }
   /* En móvil, como mucho 2 previsualizaciones a la vez (las más cercanas al centro de la pantalla): así va más fluido */
   function balance() {
-    if (paused || !isMv()) return;
+    if (paused || !(isMv() || isPhone())) return;
     var c = onScreen.filter(function (v) { return v.classList.contains('work-prev') && !inOpen(v); });
     var mid = window.innerHeight / 2;
     var d = function (v) { var r = v.getBoundingClientRect(); return Math.abs(r.top + r.height / 2 - mid); };
@@ -1035,6 +1047,8 @@ html.paused .rec i { animation: none; }
   /* Pantalla estrecha (móvil): es la misma página, solo cambia la distribución y se piden vídeos más ligeros. */
   var mvq = window.matchMedia('(max-width: 760px)');
   function isMv() { return !!mvq && mvq.matches; }
+  function isTouch() { return !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches); }
+  function isPhone() { return isTouch() && Math.min(screen.width, screen.height) < 600; }
   /* El menú marca la sección que se está viendo */
   var menuLinks = $$('.menu a');
   if ('IntersectionObserver' in window && menuLinks.length) {
@@ -1223,10 +1237,10 @@ html.paused .rec i { animation: none; }
   /* Qué versión del vídeo completo se carga: 720p en móvil, 1080p en ordenador y 4K en pantallas grandes o de alta densidad (monitores 1440p/4K, portátiles retina) con buena conexión */
   function pickFull(w) {
     var c = navigator.connection || {}, d = function (k) { return w.getAttribute(k); };
-    if (isMv() || c.saveData || /^(slow-)?[23]g$/.test(c.effectiveType || '')) return d('data-m') || d('data-hd') || d('data-video');
+    if (isMv() || isPhone() || c.saveData || /^(slow-)?[23]g$/.test(c.effectiveType || '')) return d('data-m') || d('data-hd') || d('data-video');
     var px = Math.max(screen.width, screen.height) * (window.devicePixelRatio || 1), hevc = '';
     try { hevc = document.createElement('video').canPlayType('video/mp4; codecs="hvc1.1.6.L153.B0"'); } catch (e) {}
-    if (px >= 2500 && hevc && (!c.downlink || c.downlink >= 10)) return d('data-video');
+    if (px >= 2500 && hevc && !isTouch() && (!c.downlink || c.downlink >= 10)) return d('data-video');
     return d('data-hd') || d('data-video');
   }
   /* En móvil el vídeo se abre en una pantalla propia, a pantalla completa */
