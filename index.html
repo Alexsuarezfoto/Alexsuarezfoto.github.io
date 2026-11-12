@@ -893,8 +893,8 @@ html.paused .rec i { animation: none; }
 (function () {
   var KEY = 'idioma', root = document.documentElement;
   var STR = {
-    es: { pause: 'Pausar', resume: 'Reanudar', close: 'Cerrar ×', closeVideo: 'Cerrar vídeo', play: 'Reproducir: ', sending: 'Enviando…', errName: 'Escribe tu nombre.', errEmail: 'Escribe un correo válido.', errMsg: 'Cuéntame qué necesitas.', noMail: 'El formulario aún no tiene un correo asignado.', fail: 'No se ha podido enviar el mensaje. Inténtalo de nuevo o escríbeme a', or: ' o por ' },
-    en: { pause: 'Pause', resume: 'Resume', close: 'Close ×', closeVideo: 'Close video', play: 'Play: ', sending: 'Sending…', errName: 'Please enter your name.', errEmail: 'Please enter a valid email address.', errMsg: 'Tell me what you need.', noMail: 'The form has no email address set up yet.', fail: 'The message could not be sent. Try again or write to me at', or: ' or on ' }
+    es: { pause: 'Pausar', resume: 'Reanudar', close: 'Cerrar ×', closeVideo: 'Cerrar vídeo', play: 'Reproducir: ', sending: 'Enviando…', errName: 'Escribe tu nombre.', errEmail: 'Escribe un correo válido.', errMsg: 'Cuéntame qué necesitas.', noMail: 'El formulario aún no tiene un correo asignado.', wait: 'Enviando… puede tardar hasta un minuto. No cierres esta página.', unsure: 'No hemos podido confirmar el envío; es posible que el mensaje haya llegado. Si no recibes respuesta en un par de días, escríbeme a', fail: 'No se ha podido enviar el mensaje. Inténtalo de nuevo o escríbeme a', or: ' o por ' },
+    en: { pause: 'Pause', resume: 'Resume', close: 'Close ×', closeVideo: 'Close video', play: 'Play: ', sending: 'Sending…', errName: 'Please enter your name.', errEmail: 'Please enter a valid email address.', errMsg: 'Tell me what you need.', noMail: 'The form has no email address set up yet.', wait: 'Sending… this can take up to a minute. Please keep this page open.', unsure: 'We could not confirm that the message was sent; it may still have arrived. If you do not hear back within a couple of days, write to me at', fail: 'The message could not be sent. Try again or write to me at', or: ' or on ' }
   };
   var META = {
     es: { title: document.title, desc: (document.querySelector('meta[name="description"]') || {}).content || '' },
@@ -1461,15 +1461,18 @@ html.paused .rec i { animation: none; }
 })();
 
 /* Formulario de contacto: envía el mensaje a tu correo sin salir de la web.
-   Pensado para que funcione también dentro del navegador de Instagram (y otros navegadores internos):
-   - Los errores de los campos se escriben debajo de cada campo (esos navegadores no enseñan los avisos nativos).
-   - El botón dice "Enviando…" mientras trabaja, y siempre acaba diciendo algo (enviado o error).
-   - Si el envío normal no responde o falla, se prueba automáticamente el envío clásico de FormSubmit, que vuelve a esta página. */
+   Cómo envía: un formulario normal de FormSubmit dirigido a un marco oculto (iframe). Es el método más antiguo y
+   compatible: funciona en cualquier navegador, también dentro del de Instagram. (El envío con fetch/AJAX ya no sirve:
+   FormSubmit no da el permiso técnico CORS y el navegador lo bloquea.)
+   FormSubmit confirma redirigiendo el marco a enviado.html, que es de esta misma web; si el marco llega ahí, el mensaje salió.
+   FormSubmit puede tardar casi un minuto en contestar: por eso se avisa y se espera, sin dar un error antes de tiempo.
+   Los errores de los campos se escriben debajo de cada campo (los navegadores internos no enseñan los avisos nativos). */
 (function () {
   var form = document.getElementById('contact-form'); if (!form) return;
   var done = document.getElementById('cf-done'), status = document.getElementById('cf-status');
   var btn = form.querySelector('button[type="submit"]');
-  var to = '', ready = false, url = '', busy = false;
+  var to = '', ready = false, busy = false;
+  var WAIT = 100000, GRACE = 20000;                             // espera máxima de confirmación / margen si FormSubmit enseña su propia página
   var F = { name: document.getElementById('cf-name'), email: document.getElementById('cf-email'), message: document.getElementById('cf-msg') };
   var errs = {};
   Object.keys(F).forEach(function (k) {
@@ -1483,7 +1486,6 @@ html.paused .rec i { animation: none; }
     var m = action.match(/formsubmit\.co\/(?:ajax\/)?([^\/?#]+)/);
     to = m ? decodeURIComponent(m[1]) : '';
     ready = !!to && to.indexOf('ejemplo.com') === -1;
-    url = action.replace(/formsubmit\.co\/(?:ajax\/)?/, 'formsubmit.co/ajax/');
   }
   function say(text, withLinks, isErr) {
     status.textContent = text; status.classList.toggle('is-err', !!isErr);
@@ -1500,14 +1502,28 @@ html.paused .rec i { animation: none; }
   }
   function invalid(k, key) { errs[k].textContent = L.t(key); errs[k].hidden = false; F[k].setAttribute('aria-invalid', 'true'); return F[k]; }
 
-  /* Envío clásico (sin JavaScript de por medio): FormSubmit recibe el formulario y vuelve a esta página con ?enviado=1 */
-  function classic(v) {
-    var f = document.createElement('form'); f.method = 'POST'; f.action = 'https://formsubmit.co/' + encodeURIComponent(to).replace(/%40/g, '@'); f.style.display = 'none';
+  /* Manda el formulario a FormSubmit dentro de un marco oculto y avisa con cb('ok' | 'page') cuando sabe algo.
+     Devuelve una función que limpia el marco. */
+  function transmit(v, cb) {
+    var id = 'cf-frame-' + Date.now(), grace = 0;
+    var ifr = document.createElement('iframe');
+    ifr.name = id; ifr.tabIndex = -1; ifr.setAttribute('aria-hidden', 'true'); ifr.setAttribute('title', '');
+    ifr.style.cssText = 'position:absolute;width:0;height:0;border:0;visibility:hidden';
+    document.body.appendChild(ifr);
+    var f = document.createElement('form'); f.method = 'POST'; f.target = id; f.acceptCharset = 'UTF-8'; f.style.display = 'none';
+    f.action = 'https://formsubmit.co/' + encodeURIComponent(to).replace(/%40/g, '@');
     var add = function (n, val) { var i = document.createElement('input'); i.type = 'hidden'; i.name = n; i.value = val; f.appendChild(i); };
     add('name', v.name); add('email', v.email); add('message', v.message);
     add('_subject', 'Nuevo mensaje de ' + v.name + ' desde tu web'); add('_template', 'table'); add('_captcha', 'false');
-    add('_next', location.origin + location.pathname + '?lang=' + L.lang + '&enviado=1#contacto');
+    add('_next', location.href.replace(/[?#].*$/, '').replace(/[^\/]*$/, '') + 'enviado.html?ok=1');
+    ifr.addEventListener('load', function () {
+      var href = null; try { href = ifr.contentWindow.location.href; } catch (x) { href = null; }
+      if (href === 'about:blank') return;                       // carga inicial del marco vacío
+      if (href && /\/enviado\.html\?ok=1/.test(href)) { clearTimeout(grace); cb('ok'); return; }
+      clearTimeout(grace); grace = setTimeout(function () { cb('page'); }, GRACE);   // FormSubmit enseña su propia página: activación, captcha, error…
+    });
     document.body.appendChild(f); f.submit();
+    return function () { clearTimeout(grace); try { f.parentNode.removeChild(f); } catch (x) {} try { ifr.parentNode.removeChild(ifr); } catch (x) {} };
   }
 
   form.addEventListener('submit', function (e) {
@@ -1516,41 +1532,32 @@ html.paused .rec i { animation: none; }
     var v = { name: F.name.value.trim(), email: F.email.value.trim(), message: F.message.value.trim() }, bad = null;
     Object.keys(errs).forEach(function (k) { errs[k].hidden = true; F[k].removeAttribute('aria-invalid'); });
     say('');
-    if (!v.name) bad = invalid('name', 'errName');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)) bad = bad || invalid('email', 'errEmail');
-    if (!v.message) bad = bad || invalid('message', 'errMsg');
+    var b1 = v.name ? null : invalid('name', 'errName'),
+        b2 = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email) ? null : invalid('email', 'errEmail'),
+        b3 = v.message ? null : invalid('message', 'errMsg');
+    bad = b1 || b2 || b3;                                        // se muestran todos los avisos; el cursor va al primero
     if (bad) { try { bad.focus(); bad.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (x) {} return; }
     var hp = form.querySelector('[name="_honey"]');
     if (hp && hp.value) { ok(); return; }                        // un robot rellenó el campo oculto: se ignora
     if (!ready) { say(L.t('noMail'), false, true); return; }
 
     busy = true; btn.disabled = true; btn.setAttribute('aria-busy', 'true');
-    var label = btn.innerHTML; btn.textContent = L.t('sending'); say(L.t('sending'));
-    var finished = false, ctl = ('AbortController' in window) ? new AbortController() : null, guard = 0;
+    var label = btn.innerHTML; btn.textContent = L.t('sending'); say(L.t('wait'));
+    var state = 'wait', timer = 0, dispose = function () {};
     function end() { busy = false; btn.disabled = false; btn.removeAttribute('aria-busy'); btn.innerHTML = label; }
-    function fallback() {                                         // el envío normal no ha funcionado: se prueba el clásico
-      if (!/^https?:$/.test(location.protocol)) { end(); say(L.t('fail'), true, true); return; }
-      say(L.t('sending'));
-      try { classic(v); } catch (x) { end(); say(L.t('fail'), true, true); return; }
-      setTimeout(function () { end(); say(L.t('fail'), true, true); }, 12000);   // si el aparato no deja salir de la página
+    function result(r) {
+      if (state === 'ok') return;
+      if (r === 'ok') { state = 'ok'; clearTimeout(timer); dispose(); end(); ok(); return; }   // también si llega tarde
+      if (state !== 'wait') return;
+      clearTimeout(timer); end();
+      if (r === 'timeout') { state = 'unsure'; say(L.t('unsure'), true, true); }                // el marco se queda por si el envío llega tarde
+      else { state = 'fail'; dispose(); say(L.t('fail'), true, true); }
     }
-    guard = setTimeout(function () { if (finished) return; finished = true; try { if (ctl) ctl.abort(); } catch (x) {} fallback(); }, 15000);
-    var body = { name: v.name, email: v.email, message: v.message, _replyto: v.email,
-      _subject: 'Nuevo mensaje de ' + v.name + ' desde tu web', _template: 'table', _captcha: 'false' };
-    fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(body), signal: ctl ? ctl.signal : undefined })
-      .then(function (r) {
-        return r.json().catch(function () { return {}; }).then(function (j) {
-          if (!r.ok || String(j.success) === 'false') { try { console.warn('Formulario:', r.status, j.message || ''); } catch (x) {} var er = new Error('envio'); er.activar = /activat|activaci/i.test(String(j.message || '')); throw er; }
-        });
-      })
-      .then(function () { if (finished) return; finished = true; clearTimeout(guard); end(); ok(); })
-      .catch(function (er) {
-        if (finished) return; finished = true; clearTimeout(guard);
-        if (er && er.activar) { end(); say(L.t('fail'), true, true); } else fallback();
-      });
+    timer = setTimeout(function () { result('timeout'); }, WAIT);
+    try { dispose = transmit(v, result); } catch (x) { result('page'); }
   });
 
-  /* Al volver de FormSubmit tras un envío clásico */
+  /* Por si alguien llega con ?enviado=1 (enlace de versiones anteriores) */
   if (/[?&]enviado=1\b/.test(location.search)) {
     ok();
     try { history.replaceState(null, '', location.pathname + location.hash); } catch (x) {}
