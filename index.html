@@ -422,7 +422,11 @@ section { padding-block: clamp(56px, 7vw, 96px) 0; }
 .cf-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px 24px; flex-wrap: wrap; }
 .contact .btn.send:disabled { opacity: .55; cursor: progress; }
 .contact .cf-status { margin: 0; max-width: none; min-height: 1.5em; font-size: 15px; line-height: 1.5; color: var(--muted); }
-.contact .cf-status a { color: var(--ink); text-underline-offset: 3px; }
+.contact .cf-status a { color: var(--ink); text-underline-offset: 3px; overflow-wrap: anywhere; }
+.contact .cf-status:not(:empty) { padding: 12px 16px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--bg); color: var(--ink); text-align: center; }
+.contact .cf-status.is-err { border-color: var(--rec); }
+.cf-err { margin: 0; font-size: 14px; line-height: 1.4; color: #ff9a91; }
+.cf-field input[aria-invalid="true"], .cf-field textarea[aria-invalid="true"] { border-color: var(--rec); }
 .contact .cf-legal { margin: 0; max-width: none; font-size: 13px; line-height: 1.55; color: var(--muted); text-align: center; }
 .contact .cf-legal a { color: var(--ink); text-underline-offset: 3px; }
 .contact .cf-done { max-width: 640px; margin: 36px auto 0; padding: clamp(28px, 5vw, 44px) clamp(20px, 4vw, 40px); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg); }
@@ -846,8 +850,8 @@ html.paused .rec i { animation: none; }
           <!-- Ejemplo: déjalo solo si es verdad, o bórralo -->
           <span class="note mono" data-en="I reply within 48 hours">Respondo en menos de 48 horas</span>
         </div>
-        <p class="cf-legal" data-en='Data controller: Alejandro Suárez Viqueira. Purpose: to answer your enquiry. You can access, correct or delete your data and exercise your other rights. More information in the <a href="legal.html#privacidad">privacy policy</a>.'>Responsable: Alejandro Suárez Viqueira. Finalidad: responder a tu consulta. Puedes acceder a tus datos, rectificarlos o suprimirlos y ejercer tus demás derechos. Más información en la <a href="legal.html#privacidad">política de privacidad</a>.</p>
         <p class="cf-status" id="cf-status" role="status" aria-live="polite"></p>
+        <p class="cf-legal" data-en='Data controller: Alejandro Suárez Viqueira. Purpose: to answer your enquiry. You can access, correct or delete your data and exercise your other rights. More information in the <a href="legal.html#privacidad">privacy policy</a>.'>Responsable: Alejandro Suárez Viqueira. Finalidad: responder a tu consulta. Puedes acceder a tus datos, rectificarlos o suprimirlos y ejercer tus demás derechos. Más información en la <a href="legal.html#privacidad">política de privacidad</a>.</p>
       </form>
       <div class="cf-done" id="cf-done" hidden tabindex="-1">
         <h3 data-en="Message sent">Mensaje enviado</h3>
@@ -889,8 +893,8 @@ html.paused .rec i { animation: none; }
 (function () {
   var KEY = 'idioma', root = document.documentElement;
   var STR = {
-    es: { pause: 'Pausar', resume: 'Reanudar', close: 'Cerrar ×', closeVideo: 'Cerrar vídeo', play: 'Reproducir: ', sending: 'Enviando…', noMail: 'El formulario aún no tiene un correo asignado.', fail: 'No se ha podido enviar el mensaje. Inténtalo de nuevo o escríbeme a', or: ' o por ' },
-    en: { pause: 'Pause', resume: 'Resume', close: 'Close ×', closeVideo: 'Close video', play: 'Play: ', sending: 'Sending…', noMail: 'The form has no email address set up yet.', fail: 'The message could not be sent. Try again or write to me at', or: ' or on ' }
+    es: { pause: 'Pausar', resume: 'Reanudar', close: 'Cerrar ×', closeVideo: 'Cerrar vídeo', play: 'Reproducir: ', sending: 'Enviando…', errName: 'Escribe tu nombre.', errEmail: 'Escribe un correo válido.', errMsg: 'Cuéntame qué necesitas.', noMail: 'El formulario aún no tiene un correo asignado.', fail: 'No se ha podido enviar el mensaje. Inténtalo de nuevo o escríbeme a', or: ' o por ' },
+    en: { pause: 'Pause', resume: 'Resume', close: 'Close ×', closeVideo: 'Close video', play: 'Play: ', sending: 'Sending…', errName: 'Please enter your name.', errEmail: 'Please enter a valid email address.', errMsg: 'Tell me what you need.', noMail: 'The form has no email address set up yet.', fail: 'The message could not be sent. Try again or write to me at', or: ' or on ' }
   };
   var META = {
     es: { title: document.title, desc: (document.querySelector('meta[name="description"]') || {}).content || '' },
@@ -1456,12 +1460,24 @@ html.paused .rec i { animation: none; }
   if (sec) setTimeout(function () { sec.scrollIntoView({ block: 'start' }); }, 350);
 })();
 
-/* Formulario de contacto: envía el mensaje a tu correo sin salir de la web */
+/* Formulario de contacto: envía el mensaje a tu correo sin salir de la web.
+   Pensado para que funcione también dentro del navegador de Instagram (y otros navegadores internos):
+   - Los errores de los campos se escriben debajo de cada campo (esos navegadores no enseñan los avisos nativos).
+   - El botón dice "Enviando…" mientras trabaja, y siempre acaba diciendo algo (enviado o error).
+   - Si el envío normal no responde o falla, se prueba automáticamente el envío clásico de FormSubmit, que vuelve a esta página. */
 (function () {
   var form = document.getElementById('contact-form'); if (!form) return;
   var done = document.getElementById('cf-done'), status = document.getElementById('cf-status');
   var btn = form.querySelector('button[type="submit"]');
-  var to = '', ready = false, url = '';
+  var to = '', ready = false, url = '', busy = false;
+  var F = { name: document.getElementById('cf-name'), email: document.getElementById('cf-email'), message: document.getElementById('cf-msg') };
+  var errs = {};
+  Object.keys(F).forEach(function (k) {
+    var p = document.createElement('p'); p.className = 'cf-err'; p.id = 'cf-err-' + k; p.setAttribute('role', 'alert'); p.hidden = true;
+    F[k].parentNode.appendChild(p); errs[k] = p;
+    F[k].setAttribute('aria-describedby', p.id);
+    F[k].addEventListener('input', function () { p.hidden = true; F[k].removeAttribute('aria-invalid'); });
+  });
   function cfg() {                                              // lee el correo del action en cada envío
     var action = form.getAttribute('action') || '';
     var m = action.match(/formsubmit\.co\/(?:ajax\/)?([^\/?#]+)/);
@@ -1469,40 +1485,77 @@ html.paused .rec i { animation: none; }
     ready = !!to && to.indexOf('ejemplo.com') === -1;
     url = action.replace(/formsubmit\.co\/(?:ajax\/)?/, 'formsubmit.co/ajax/');
   }
-  function say(text, withLinks) {
-    status.textContent = text;
-    if (!withLinks) return;
-    status.appendChild(document.createTextNode(' '));
-    if (to.indexOf('@') > -1) { var a = document.createElement('a'); a.href = 'mailto:' + to; a.textContent = to; status.appendChild(a); status.appendChild(document.createTextNode(L.t('or'))); }
-    var ig = document.createElement('a'); ig.href = 'https://www.instagram.com/alexsuarez_11/'; ig.target = '_blank'; ig.rel = 'noopener'; ig.textContent = 'Instagram'; status.appendChild(ig); status.appendChild(document.createTextNode('.'));
+  function say(text, withLinks, isErr) {
+    status.textContent = text; status.classList.toggle('is-err', !!isErr);
+    if (withLinks) {
+      status.appendChild(document.createTextNode(' '));
+      if (to.indexOf('@') > -1) { var a = document.createElement('a'); a.href = 'mailto:' + to; a.textContent = to; status.appendChild(a); status.appendChild(document.createTextNode(L.t('or'))); }
+      var ig = document.createElement('a'); ig.href = 'https://www.instagram.com/alexsuarez_11/'; ig.target = '_blank'; ig.rel = 'noopener'; ig.textContent = 'Instagram'; status.appendChild(ig); status.appendChild(document.createTextNode('.'));
+    }
+    if (text) { try { status.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }
   }
   function ok() {
     form.hidden = true; done.hidden = false; form.reset(); say('');
     try { done.focus({ preventScroll: true }); } catch (e) {}
   }
+  function invalid(k, key) { errs[k].textContent = L.t(key); errs[k].hidden = false; F[k].setAttribute('aria-invalid', 'true'); return F[k]; }
+
+  /* Envío clásico (sin JavaScript de por medio): FormSubmit recibe el formulario y vuelve a esta página con ?enviado=1 */
+  function classic(v) {
+    var f = document.createElement('form'); f.method = 'POST'; f.action = 'https://formsubmit.co/' + encodeURIComponent(to).replace(/%40/g, '@'); f.style.display = 'none';
+    var add = function (n, val) { var i = document.createElement('input'); i.type = 'hidden'; i.name = n; i.value = val; f.appendChild(i); };
+    add('name', v.name); add('email', v.email); add('message', v.message);
+    add('_subject', 'Nuevo mensaje de ' + v.name + ' desde tu web'); add('_template', 'table'); add('_captcha', 'false');
+    add('_next', location.origin + location.pathname + '?lang=' + L.lang + '&enviado=1#contacto');
+    document.body.appendChild(f); f.submit();
+  }
+
   form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    if (!form.checkValidity()) { form.reportValidity(); return; }
+    e.preventDefault(); if (busy) return;
     cfg();
-    var f = new FormData(form);
-    if (f.get('_honey')) { ok(); return; }                       // un robot rellenó el campo oculto: se ignora
-    if (!ready) { say(L.t('noMail')); return; }
-    var name = String(f.get('name')).trim(), email = String(f.get('email')).trim();
-    var body = { name: name, email: email, message: String(f.get('message')).trim(), _replyto: email,
-      _subject: 'Nuevo mensaje de ' + name + ' desde tu web', _template: 'table', _captcha: 'false' };
-    btn.disabled = true; say(L.t('sending'));
-    var ctl = ('AbortController' in window) ? new AbortController() : null;
-    var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 20000);
+    var v = { name: F.name.value.trim(), email: F.email.value.trim(), message: F.message.value.trim() }, bad = null;
+    Object.keys(errs).forEach(function (k) { errs[k].hidden = true; F[k].removeAttribute('aria-invalid'); });
+    say('');
+    if (!v.name) bad = invalid('name', 'errName');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)) bad = bad || invalid('email', 'errEmail');
+    if (!v.message) bad = bad || invalid('message', 'errMsg');
+    if (bad) { try { bad.focus(); bad.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (x) {} return; }
+    var hp = form.querySelector('[name="_honey"]');
+    if (hp && hp.value) { ok(); return; }                        // un robot rellenó el campo oculto: se ignora
+    if (!ready) { say(L.t('noMail'), false, true); return; }
+
+    busy = true; btn.disabled = true; btn.setAttribute('aria-busy', 'true');
+    var label = btn.innerHTML; btn.textContent = L.t('sending'); say(L.t('sending'));
+    var finished = false, ctl = ('AbortController' in window) ? new AbortController() : null, guard = 0;
+    function end() { busy = false; btn.disabled = false; btn.removeAttribute('aria-busy'); btn.innerHTML = label; }
+    function fallback() {                                         // el envío normal no ha funcionado: se prueba el clásico
+      if (!/^https?:$/.test(location.protocol)) { end(); say(L.t('fail'), true, true); return; }
+      say(L.t('sending'));
+      try { classic(v); } catch (x) { end(); say(L.t('fail'), true, true); return; }
+      setTimeout(function () { end(); say(L.t('fail'), true, true); }, 12000);   // si el aparato no deja salir de la página
+    }
+    guard = setTimeout(function () { if (finished) return; finished = true; try { if (ctl) ctl.abort(); } catch (x) {} fallback(); }, 15000);
+    var body = { name: v.name, email: v.email, message: v.message, _replyto: v.email,
+      _subject: 'Nuevo mensaje de ' + v.name + ' desde tu web', _template: 'table', _captcha: 'false' };
     fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(body), signal: ctl ? ctl.signal : undefined })
       .then(function (r) {
         return r.json().catch(function () { return {}; }).then(function (j) {
-          if (!r.ok || String(j.success) === 'false') { try { console.warn('Formulario:', r.status, j.message || ''); } catch (e) {} throw new Error('envio'); }
+          if (!r.ok || String(j.success) === 'false') { try { console.warn('Formulario:', r.status, j.message || ''); } catch (x) {} var er = new Error('envio'); er.activar = /activat|activaci/i.test(String(j.message || '')); throw er; }
         });
       })
-      .then(ok)
-      .catch(function () { say(L.t('fail'), true); })
-      .then(function () { clearTimeout(timer); btn.disabled = false; });
+      .then(function () { if (finished) return; finished = true; clearTimeout(guard); end(); ok(); })
+      .catch(function (er) {
+        if (finished) return; finished = true; clearTimeout(guard);
+        if (er && er.activar) { end(); say(L.t('fail'), true, true); } else fallback();
+      });
   });
+
+  /* Al volver de FormSubmit tras un envío clásico */
+  if (/[?&]enviado=1\b/.test(location.search)) {
+    ok();
+    try { history.replaceState(null, '', location.pathname + location.hash); } catch (x) {}
+    setTimeout(function () { try { done.scrollIntoView({ block: 'center' }); } catch (x) {} }, 300);
+  }
 })();
 </script>
 </body>
