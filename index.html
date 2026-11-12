@@ -744,6 +744,9 @@ html.paused .rec i { animation: none; }
           <a href="https://www.instagram.com/iberik.hoteles/" target="_blank" rel="noopener" aria-label="Iberik Hoteles en Instagram" data-en-aria-label="Iberik Hoteles on Instagram">Iberik Hoteles</a>
           <a href="https://www.instagram.com/seaglassdsign/" target="_blank" rel="noopener" aria-label="Seaglass Design en Instagram" data-en-aria-label="Seaglass Design on Instagram">Seaglass Design</a>
           <a href="https://www.instagram.com/vazvabrand/" target="_blank" rel="noopener" aria-label="VAZVA Brand en Instagram" data-en-aria-label="VAZVA Brand on Instagram">VAZVA Brand</a>
+          <a href="https://www.instagram.com/warmouth_eyewear/" target="_blank" rel="noopener" aria-label="Warmouth Eyewear en Instagram" data-en-aria-label="Warmouth Eyewear on Instagram">Warmouth Eyewear</a>
+          <a href="https://www.instagram.com/razsurfcamp/" target="_blank" rel="noopener" aria-label="Raz Surf Camp en Instagram" data-en-aria-label="Raz Surf Camp on Instagram">Raz Surf Camp</a>
+          <a href="https://www.instagram.com/caionsurfhouse/" target="_blank" rel="noopener" aria-label="Caión Surf House en Instagram" data-en-aria-label="Caión Surf House on Instagram">Caión Surf House</a>
         </div>
       </div>
     </div>
@@ -977,7 +980,7 @@ html.paused .rec i { animation: none; }
     root.classList.toggle('paused', paused);
     motionLabel.textContent = L.t(paused ? 'resume' : 'pause');
     videos.forEach(function (v) { if (paused) v.pause(); else if (onScreen.indexOf(v) > -1 && !inOpen(v)) play(v); });
-    if (paused) { try { hv.currentTime = 0; } catch (e) {} setTc('00:00:00:00'); }
+    if (paused) { try { hv.currentTime = 0; } catch (e) {} setTc('00:00:00:00'); } else balance();
   }
   document.addEventListener('langchange', function () { motionLabel.textContent = L.t(paused ? 'resume' : 'pause'); });
   motion.addEventListener('click', function () {
@@ -992,6 +995,15 @@ html.paused .rec i { animation: none; }
     v.src = (isMv() && v.getAttribute('data-src-m')) || v.getAttribute('data-src');
     var card = v.parentNode;
     if (card && card.classList) v.addEventListener('playing', function () { card.classList.add('is-ready'); }, { once: true });
+  }
+  /* En móvil, como mucho 2 previsualizaciones a la vez (las más cercanas al centro de la pantalla): así va más fluido */
+  function balance() {
+    if (paused || !isMv()) return;
+    var c = onScreen.filter(function (v) { return v.classList.contains('work-prev') && !inOpen(v); });
+    var mid = window.innerHeight / 2;
+    var d = function (v) { var r = v.getBoundingClientRect(); return Math.abs(r.top + r.height / 2 - mid); };
+    c.sort(function (a, b) { return d(a) - d(b); });
+    c.forEach(function (v, i) { if (i < 2) { if (v.paused) play(v); } else if (!v.paused) v.pause(); });
   }
   /* Los vídeos solo se reproducen mientras se ven en pantalla */
   if ('IntersectionObserver' in window) {
@@ -1008,8 +1020,11 @@ html.paused .rec i { animation: none; }
         if (en.isIntersecting) { if (i < 0) onScreen.push(v); if (!paused && !inOpen(v)) { ensureSrc(v); play(v); } }
         else { if (i > -1) onScreen.splice(i, 1); v.pause(); }
       });
+      balance();
     }, { threshold: 0.35 });
     videos.forEach(function (v) { io.observe(v); if (v.getAttribute('data-src')) near.observe(v); });
+    var bt = 0;
+    window.addEventListener('scroll', function () { if (bt) return; bt = setTimeout(function () { bt = 0; balance(); }, 160); }, { passive: true });
   } else { onScreen = videos.slice(); videos.forEach(ensureSrc); }
 
   /* Si el móvil bloquea el autoplay (ahorro de batería), arranca con el primer toque o scroll */
