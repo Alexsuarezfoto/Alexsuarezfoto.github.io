@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Cambia la dirección por tu .com cuando lo tengas
+Sitemap: https://alexsuarezfoto.github.io/sitemap.xml
