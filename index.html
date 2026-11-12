@@ -49,7 +49,6 @@
 <link rel="preload" as="image" href="images/poster-portada-m.jpg" media="(max-width: 760px)" fetchpriority="high">
 <link rel="preload" as="image" href="images/poster-portada.jpg" media="(min-width: 761px)" fetchpriority="high">
 <!-- Móvil: se decide la pantalla de inicio antes de pintar nada, para que no haya saltos -->
-<script>(function(){var d=document.documentElement;if(window.matchMedia&&matchMedia('(max-width:760px)').matches){d.classList.add('mv');var h=(location.hash||'').slice(1);d.setAttribute('data-view',{trabajos:'trabajos',fotos:'fotos','sobre-mi':'sobre',contacto:'contacto'}[h]||'inicio');}})();</script>
 
 <style>
 /* Cine con carácter propio: fondo grafito, texto blanco roto y un único toque de color (el rojo del REC).
@@ -139,8 +138,27 @@ h2 { font-family: var(--font); font-weight: 600; font-size: clamp(26px, 3.4vw, 4
 .hdr-ig { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-md); color: rgba(236, 232, 225, .88); transition: color .2s, background .25s, border-color .25s, transform .3s cubic-bezier(.3, 1.4, .5, 1); }
 .hdr-ig:hover { color: var(--ink); background: var(--glass-hi); border-color: rgba(236, 232, 225, .34); transform: scale(1.07); }
 .hdr-ig svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+/* Selector de idioma: discreto, dos letras. El idioma activo se ve más claro. */
+.lang { display: inline-flex; gap: 2px; padding: 3px; border-radius: var(--r-md); background: var(--glass); border: 1px solid var(--glass-line); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: var(--glass-edge), 0 8px 24px rgba(0, 0, 0, .16); }
+.lang button { min-width: 34px; height: 36px; padding: 0 8px; border: 0; border-radius: 10px; background: transparent; color: rgba(236, 232, 225, .6); font-family: var(--font); font-weight: 600; font-size: 12px; line-height: 1; letter-spacing: .08em; text-shadow: 0 1px 8px rgba(0, 0, 0, .3); cursor: pointer; transition: color .2s, background .25s; }
+.lang button:hover { color: var(--ink); }
+.lang button[aria-pressed="true"] { color: var(--ink); background: rgba(236, 232, 225, .13); }
+.lang button:focus-visible, .nav-toggle:focus-visible, .nav-panel a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+/* Menú del móvil: un botón en la cabecera que abre una lista de cristal (solo en pantallas estrechas) */
+.bar { position: relative; }
+.nav-toggle { display: none; place-items: center; width: 40px; height: 40px; padding: 0; border-radius: var(--r-md); background: var(--glass); border: 1px solid var(--glass-line); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: var(--glass-edge), 0 8px 24px rgba(0, 0, 0, .16); color: rgba(236, 232, 225, .9); cursor: pointer; }
+.nav-toggle svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.nav-toggle .x { display: none; }
+.nav-toggle[aria-expanded="true"] .x { display: block; }
+.nav-toggle[aria-expanded="true"] .bars { display: none; }
+.nav-panel { position: absolute; z-index: 6; top: calc(100% + 4px); right: max(20px, env(safe-area-inset-right, 0px)); min-width: 230px; display: flex; flex-direction: column; padding: 6px; border-radius: var(--r-md); background: rgba(22, 26, 29, .78); border: 1px solid var(--glass-line); -webkit-backdrop-filter: blur(24px) saturate(1.6); backdrop-filter: blur(24px) saturate(1.6); box-shadow: var(--glass-edge), 0 18px 40px rgba(0, 0, 0, .45); }
+.nav-panel[hidden] { display: none; }
+.nav-panel a { display: block; padding: 13px 14px; border-radius: 10px; font-size: 17px; font-weight: 500; color: var(--ink); text-decoration: none; }
+.nav-panel a:hover, .nav-panel a:active { background: rgba(236, 232, 225, .1); }
+.nav-panel i { display: block; height: 1px; margin: 4px 10px; background: var(--line); }
+@media (min-width: 761px) { .nav-panel { display: none !important; } }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-.work-open, .frame, .motion, .film-nav, .tabbar a { -webkit-tap-highlight-color: transparent; }
+.work-open, .frame, .motion, .film-nav, .lang button, .nav-toggle { -webkit-tap-highlight-color: transparent; }
 
 /* Portada: vídeo grande con el texto encima.
    Alto = 16:9 del ancho, limitado para que debajo asome la siguiente sección. */
@@ -168,7 +186,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 h1 { margin: 0; font-weight: 600; line-height: 1; }
 h1 .big { display: block; font-size: clamp(28px, min(4vw, 7vh), 58px); line-height: 1.02; letter-spacing: .02em; text-transform: uppercase; text-wrap: balance; }
-.hero-lead { margin: 16px 0 0; max-width: 40ch; font-size: 18px; color: var(--ink); }
+.hero-lead { margin: 16px 0 0; max-width: 40ch; font-size: 18px; color: var(--ink); text-wrap: balance; }
 .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; text-shadow: none; }
 .hero-btns .btn.solid { box-shadow: var(--glass-edge), 0 10px 30px rgba(0,0,0,.3); }
 
@@ -463,18 +481,18 @@ html.paused .rec i { animation: none; }
   .cf-actions .btn { width: 100%; }
 }
 
-/* ===== Móvil: más compacto, con barra inferior y cada sección como una pantalla ===== */
-.tabbar { display: none; }
+/* ===== Móvil: la misma página, más compacta. El menú es un botón en la cabecera ===== */
 @media (max-width: 760px) {
-  body { font-size: 16px; padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
+  body { font-size: 16px; padding-bottom: env(safe-area-inset-bottom, 0px); }
   html { scroll-padding-top: 60px; }
   .bar { min-height: 54px; gap: 8px; }
   .brand { font-size: 15px; gap: 10px; }
   .brand { padding-right: 14px; }
   .brand-mark { width: 30px; height: 30px; border-radius: 9px; font-size: 13px; }
-  .menu, .hdr-right .btn { display: none; }
-  .hdr-right { margin-left: 0; }
-  .hdr-ig { width: 40px; height: 40px; }
+  .menu, .hdr-right .btn, .hdr-right .hdr-ig { display: none; }
+  .hdr-right { margin-left: 0; gap: 8px; }
+  .lang button { min-width: 30px; height: 32px; padding: 0 6px; }
+  .nav-toggle { display: grid; }
   :root { --hdr: calc(54px + env(safe-area-inset-top, 0px)); }
   .hero { height: calc(clamp(380px, 62svh, 560px) + var(--hdr)); }
   .hero-inner { padding-block: calc(14px + var(--hdr)) 22px; }
@@ -483,7 +501,7 @@ html.paused .rec i { animation: none; }
   h1 .big { font-size: clamp(25px, 7.2vw, 32px); }
   .hero-lead { margin-top: 10px; font-size: 16px; }
   .hero-btns { margin-top: 18px; }
-  section { padding-block: 32px 0; }
+  section { padding-block: 44px 0; }
   .head-center { margin-bottom: 18px; }
   h2 { font-size: clamp(22px, 6.2vw, 27px); }
   .services { gap: 14px; }
@@ -500,8 +518,7 @@ html.paused .rec i { animation: none; }
   .works { --gap: 10px; }
   .row-head { margin-bottom: 14px; }
   .about-grid { gap: 18px; }
-  .portrait { aspect-ratio: 5 / 4; max-width: none; border-radius: 16px; }
-  .portrait img { object-position: 50% 20%; }
+  .portrait { max-width: 360px; margin-inline: auto; width: 100%; border-radius: 16px; }
   .about p.body { margin-top: 12px; font-size: 15.5px; }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; margin-top: 20px; padding-top: 18px; }
   .process-head p { margin-top: 8px; }
@@ -512,39 +529,21 @@ html.paused .rec i { animation: none; }
   .tl-txt { padding: 12px 14px 15px; }
   .tl-txt h3 { font-size: 17px; }
   .tl-txt p { font-size: 14.5px; margin-top: 3px; }
-  .contact { margin-top: 0; padding-block: 36px 28px; }
+  .contact { margin-top: 48px; padding-block: 44px 28px; }
   .contact h2 { font-size: clamp(26px, 8vw, 34px); }
   .contact-form { margin-top: 24px; gap: 14px; }
   .cf-field textarea { min-height: 110px; }
   .contact-alt { margin-top: 28px; padding-top: 22px; }
   footer { padding-block: 22px 8px; }
   /* El botón de pausa se queda en un icono pequeño, encima de la barra inferior */
-  .motion { top: calc(7px + env(safe-area-inset-top, 0px)); bottom: auto; right: max(66px, calc(46px + env(safe-area-inset-right, 0px))); width: 40px; height: 40px; padding: 0; justify-content: center; border-radius: var(--r-md); color: rgba(236, 232, 225, .88); }
+  .motion { top: calc(7px + env(safe-area-inset-top, 0px)); bottom: auto; right: max(148px, calc(128px + env(safe-area-inset-right, 0px))); width: 40px; height: 40px; padding: 0; justify-content: center; border-radius: var(--r-md); color: rgba(236, 232, 225, .88); }
   .motion:hover { transform: none; }
   .motion > span:last-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  /* Barra inferior, como en una app */
-  .tabbar { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; position: fixed; z-index: 40; left: max(10px, env(safe-area-inset-left, 0px)); right: max(10px, env(safe-area-inset-right, 0px)); bottom: max(10px, env(safe-area-inset-bottom, 0px)); height: 62px; padding: 6px; border-radius: 22px; background: rgba(22, 26, 29, .58); border: 1px solid rgba(236, 232, 225, .14); -webkit-backdrop-filter: blur(24px) saturate(1.6); backdrop-filter: blur(24px) saturate(1.6); box-shadow: var(--glass-edge), 0 10px 30px rgba(0, 0, 0, .4); }
-  .tabbar a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-width: 0; border-radius: 16px; color: var(--muted); font-size: 11px; font-weight: 500; text-decoration: none; transition: color .2s, background .2s, transform .2s; }
-  .tabbar a:active { transform: scale(.94); }
-  .tabbar a[aria-current="page"] { color: var(--ink); background: color-mix(in srgb, var(--ink) 11%, transparent); }
-  .tabbar svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-  /* Cada sección es su propia pantalla (lo activa el script; sin él se ve la página entera) */
-  html.mv main { display: flex; flex-direction: column; }
-  html.mv main > [data-v] { display: none; }
-  html.mv[data-view="inicio"] main > [data-v="inicio"],
-  html.mv[data-view="trabajos"] main > [data-v="trabajos"],
-  html.mv[data-view="fotos"] main > [data-v="fotos"],
-  html.mv[data-view="sobre"] main > [data-v="sobre"],
-  html.mv[data-view="contacto"] main > [data-v="contacto"] { display: block; }
-  /* Pantalla de fotos: la tira se queda centrada en la pantalla, no pegada arriba */
-  html.mv[data-view="fotos"] main > [data-v="fotos"] { display: flex; flex-direction: column; justify-content: center; min-height: calc(100svh - 190px); padding-block: 0; }
-  html.mv #sobre-mi { order: 1; }
-  html.mv #proceso { order: 2; }
   /* Trabajos en móvil: las horizontales ocupan todo el ancho y las verticales van de dos en dos */
-  html.mv .works { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: dense; align-items: start; }
-  html.mv .works .work { grid-column: span 2; max-height: none; width: auto; margin: 0; }
-  html.mv .works .work.is-tall { grid-column: span 1; }
-  html.mv .works-br { display: none; }
+  .works { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: dense; align-items: start; }
+  .works .work { grid-column: span 2; max-height: none; width: auto; margin: 0; }
+  .works .work.is-tall { grid-column: span 1; }
+  .works-br { display: none; }
 }
 
 /* ===== Pantallas grandes (2K y 4K): el contenido y las letras crecen con la pantalla ===== */
@@ -575,16 +574,26 @@ html.paused .rec i { animation: none; }
 
 <header class="site-header">
   <div class="wrap bar">
-    <a class="brand" href="#inicio" aria-label="Alex Suárez, ir al inicio"><span class="brand-mark" aria-hidden="true">AS</span><span class="brand-name">Alex Suárez</span></a>
-    <nav class="menu" aria-label="Secciones">
-      <a href="#trabajos">Trabajos</a>
-      <a href="#fotos">Fotos</a>
-      <a href="#sobre-mi">Sobre mí</a>
+    <a class="brand" href="#inicio" aria-label="Alex Suárez, ir al inicio" data-en-aria-label="Alex Suárez, back to top"><span class="brand-mark" aria-hidden="true">AS</span><span class="brand-name">Alex Suárez</span></a>
+    <nav class="menu" aria-label="Secciones" data-en-aria-label="Sections">
+      <a href="#trabajos" data-en="Work">Trabajos</a>
+      <a href="#fotos" data-en="Photos">Fotos</a>
+      <a href="#sobre-mi" data-en="About">Sobre mí</a>
     </nav>
     <div class="hdr-right">
+      <div class="lang" role="group" aria-label="Idioma / Language"><button type="button" data-lang="es" lang="es" aria-pressed="true" title="Español">ES</button><button type="button" data-lang="en" lang="en" aria-pressed="false" title="English">EN</button></div>
       <a class="hdr-ig" href="https://www.instagram.com/alexsuarez_11/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".9" fill="currentColor" stroke="none"/></svg></a>
-      <a class="btn solid sm" href="#contacto">Contacto</a>
+      <a class="btn solid sm" href="#contacto" data-en="Contact">Contacto</a>
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label="Menú" data-en-aria-label="Menu"><svg class="bars" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h16M4 12h16M4 16.5h16"/></svg><svg class="x" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </div>
+    <nav class="nav-panel" id="nav-panel" hidden aria-label="Secciones" data-en-aria-label="Sections">
+      <a href="#trabajos" data-en="Work">Trabajos</a>
+      <a href="#fotos" data-en="Photos">Fotos</a>
+      <a href="#sobre-mi" data-en="About">Sobre mí</a>
+      <a href="#contacto" data-en="Contact">Contacto</a>
+      <i aria-hidden="true"></i>
+      <a href="https://www.instagram.com/alexsuarez_11/" target="_blank" rel="noopener">Instagram</a>
+    </nav>
   </div>
 </header>
 
@@ -593,7 +602,7 @@ html.paused .rec i { animation: none; }
   <!-- ===== PORTADA =====
        Vídeo: videos/portada.mp4 (5 a 10 s, 1080p, 16:9, sin sonido) y foto images/poster-portada.jpg.
        Se reproduce solo y en bucle. -->
-  <section class="hero" id="inicio" data-v="inicio">
+  <section class="hero" id="inicio">
     <video id="hero-video" muted loop playsinline preload="auto" aria-hidden="true"></video>
     <script>
     /* Vídeo de portada: en móvil se carga una versión vertical y pequeña (unos 5 MB); con el ahorro de datos o una conexión lenta solo se ve la foto */
@@ -608,17 +617,17 @@ html.paused .rec i { animation: none; }
     <div class="wrap hero-inner">
       <div class="hero-top">
         <div class="rec mono" aria-hidden="true"><i></i><b>REC</b><span id="tc">00:00:00:00</span></div>
-        <a class="stamp" href="#contacto" aria-label="Contacto: hablemos de tu proyecto">
-          <svg viewBox="0 0 100 100" aria-hidden="true"><defs><path id="circ" d="M50,50 m-40,0 a40,40 0 1,1 80,0 a40,40 0 1,1 -80,0"/></defs><text><textPath href="#circ" textLength="246" lengthAdjust="spacing">HABLEMOS DE TU PROYECTO  ·  HABLEMOS DE TU PROYECTO  ·  </textPath></text></svg>
+        <a class="stamp" href="#contacto" aria-label="Contacto: hablemos de tu proyecto" data-en-aria-label="Contact: let's talk about your project">
+          <svg viewBox="0 0 100 100" aria-hidden="true"><defs><path id="circ" d="M50,50 m-40,0 a40,40 0 1,1 80,0 a40,40 0 1,1 -80,0"/></defs><text><textPath href="#circ" textLength="246" lengthAdjust="spacing" data-en="LET'S TALK ABOUT YOUR PROJECT  ·  LET'S TALK ABOUT YOUR PROJECT  ·  ">HABLEMOS DE TU PROYECTO  ·  HABLEMOS DE TU PROYECTO  ·  </textPath></text></svg>
           <b aria-hidden="true">↓</b>
         </a>
       </div>
       <div class="hero-bottom">
         <div class="hero-copy">
           <!-- El texto en gris de "sr" solo lo leen buscadores y lectores de pantalla; a la vista queda solo "empresas y particulares" -->
-          <h1><span class="sr">Fotografía y vídeo en A Coruña para </span><span class="big">empresas y particulares</span></h1>
-          <p class="hero-lead">Producciones completas o cortas con resultados cinematográficos.</p>
-          <div class="hero-btns"><a class="btn solid cta" href="#trabajos"><span class="cta-ico" aria-hidden="true"></span>Ver trabajos</a></div>
+          <h1><span class="sr" data-en="Photography and video in A Coruña for ">Fotografía y vídeo en A Coruña para </span><span class="big" data-en="businesses and private clients">empresas y particulares</span></h1>
+          <p class="hero-lead" data-en="From short pieces to full productions, with a cinematic finish.">Producciones completas o cortas con resultados cinematográficos.</p>
+          <div class="hero-btns"><a class="btn solid cta" href="#trabajos"><span class="cta-ico" aria-hidden="true"></span><span data-en="View work">Ver trabajos</span></a></div>
         </div>
       </div>
     </div>
@@ -629,54 +638,54 @@ html.paused .rec i { animation: none; }
        Pon en "alt" una descripción real de la foto: ayuda a Google y a la accesibilidad.
        "Título de la foto" y "Lugar" solo se ven al pasar el ratón por encima y al abrir la foto.
        Los números de fotograma y las marcas del borde de la película se ponen solos. -->
-  <section id="fotos" data-v="fotos">
+  <section id="fotos">
     <div class="wrap row-head">
       <div>
-        <p class="kicker mono muted">Fotogramas</p>
-        <h2>Una selección reciente</h2>
+        <p class="kicker mono muted" data-en="Frames">Fotogramas</p>
+        <h2 data-en="A recent selection">Una selección reciente</h2>
       </div>
     </div>
     <div class="film">
-    <button class="film-nav film-prev is-off" type="button" id="t-prev" aria-label="Fotos anteriores" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5 7.5 12 15 19.5"/></svg></button>
-    <button class="film-nav film-next" type="button" id="t-next" aria-label="Fotos siguientes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4.5 16.5 12 9 19.5"/></svg></button>
+    <button class="film-nav film-prev is-off" type="button" id="t-prev" aria-label="Fotos anteriores" data-en-aria-label="Previous photos" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5 7.5 12 15 19.5"/></svg></button>
+    <button class="film-nav film-next" type="button" id="t-next" aria-label="Fotos siguientes" data-en-aria-label="Next photos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4.5 16.5 12 9 19.5"/></svg></button>
     <div class="track" id="track">
       <div class="reel" id="reel">
-        <button class="frame" type="button"><span class="pic"><img src="images/foto-01-1600.jpg" srcset="images/foto-01-800.jpg 800w, images/foto-01-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-01.jpg" style="--pos:50% 50%" alt="Describe la foto 1" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">Victor Bernardo</span><span class="cap-place">Maldivas · 2025</span></span></span></button>
-        <button class="frame" type="button"><span class="pic"><img src="images/foto-02-1600.jpg" srcset="images/foto-02-800.jpg 800w, images/foto-02-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-02.jpg" style="--pos:50% 50%" alt="Describe la foto 2" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">The North Face</span><span class="cap-place">Colaboración · 2026</span></span></span></button>
-        <button class="frame" type="button"><span class="pic"><img src="images/foto-03-1600.jpg" srcset="images/foto-03-800.jpg 800w, images/foto-03-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-03.jpg" style="--pos:50% 50%" alt="Describe la foto 3" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">Warmouth eyewear</span><span class="cap-place">Promoción · 2025</span></span></span></button>
-        <button class="frame" type="button"><span class="pic"><img src="images/foto-04-1600.jpg" srcset="images/foto-04-800.jpg 800w, images/foto-04-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-04.jpg" style="--pos:50% 50%" alt="Describe la foto 4" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">Seaglass Design</span><span class="cap-place">Promoción · 2026</span></span></span></button>
-        <button class="frame" type="button"><span class="pic"><img src="images/foto-05-1600.jpg" srcset="images/foto-05-800.jpg 800w, images/foto-05-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-05.jpg" style="--pos:50% 50%" alt="Describe la foto 5" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">Smile Band</span><span class="cap-place">Evento · 2025</span></span></span></button>
-        <button class="frame" type="button"><span class="pic"><img src="images/foto-06-1600.jpg" srcset="images/foto-06-800.jpg 800w, images/foto-06-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-06.jpg" style="--pos:50% 50%" alt="Describe la foto 6" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">VAZVA</span><span class="cap-place">Promoción · 2026</span></span></span></button>
-        <button class="frame" type="button"><span class="pic"><img src="images/foto-07-1600.jpg" srcset="images/foto-07-800.jpg 800w, images/foto-07-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-07.jpg" style="--pos:50% 50%" alt="Describe la foto 7" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">Seaglass Design</span><span class="cap-place">Promoción · 2025</span></span></span></button>
-        <button class="frame" type="button"><span class="pic"><img src="images/foto-08-1600.jpg" srcset="images/foto-08-800.jpg 800w, images/foto-08-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-08.jpg" style="--pos:50% 34%" alt="Describe la foto 8" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">Book fotográfico</span><span class="cap-place">Promoción</span></span></span></button>
+        <button class="frame" type="button"><span class="pic"><img src="images/foto-01-1600.jpg" srcset="images/foto-01-800.jpg 800w, images/foto-01-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-01.jpg" style="--pos:50% 50%" alt="Describe la foto 1" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">Victor Bernardo</span><span class="cap-place" data-en="Maldives · 2025">Maldivas · 2025</span></span></span></button>
+        <button class="frame" type="button"><span class="pic"><img src="images/foto-02-1600.jpg" srcset="images/foto-02-800.jpg 800w, images/foto-02-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-02.jpg" style="--pos:50% 50%" alt="Describe la foto 2" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">The North Face</span><span class="cap-place" data-en="Collaboration · 2026">Colaboración · 2026</span></span></span></button>
+        <button class="frame" type="button"><span class="pic"><img src="images/foto-03-1600.jpg" srcset="images/foto-03-800.jpg 800w, images/foto-03-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-03.jpg" style="--pos:50% 50%" alt="Describe la foto 3" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">Warmouth eyewear</span><span class="cap-place" data-en="Promotional · 2025">Promoción · 2025</span></span></span></button>
+        <button class="frame" type="button"><span class="pic"><img src="images/foto-04-1600.jpg" srcset="images/foto-04-800.jpg 800w, images/foto-04-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-04.jpg" style="--pos:50% 50%" alt="Describe la foto 4" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">Seaglass Design</span><span class="cap-place" data-en="Promotional · 2026">Promoción · 2026</span></span></span></button>
+        <button class="frame" type="button"><span class="pic"><img src="images/foto-05-1600.jpg" srcset="images/foto-05-800.jpg 800w, images/foto-05-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-05.jpg" style="--pos:50% 50%" alt="Describe la foto 5" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">Smile Band</span><span class="cap-place" data-en="Event · 2025">Evento · 2025</span></span></span></button>
+        <button class="frame" type="button"><span class="pic"><img src="images/foto-06-1600.jpg" srcset="images/foto-06-800.jpg 800w, images/foto-06-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-06.jpg" style="--pos:50% 50%" alt="Describe la foto 6" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">VAZVA</span><span class="cap-place" data-en="Promotional · 2026">Promoción · 2026</span></span></span></button>
+        <button class="frame" type="button"><span class="pic"><img src="images/foto-07-1600.jpg" srcset="images/foto-07-800.jpg 800w, images/foto-07-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-07.jpg" style="--pos:50% 50%" alt="Describe la foto 7" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">Seaglass Design</span><span class="cap-place" data-en="Promotional · 2025">Promoción · 2025</span></span></span></button>
+        <button class="frame" type="button"><span class="pic"><img src="images/foto-08-1600.jpg" srcset="images/foto-08-800.jpg 800w, images/foto-08-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-08.jpg" style="--pos:50% 34%" alt="Describe la foto 8" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title" data-en="Portfolio">Book fotográfico</span><span class="cap-place" data-en="Promotional">Promoción</span></span></span></button>
       </div>
     </div>
     </div>
   </section>
 
   <!-- ===== SERVICIOS (textos de ejemplo: cámbialos por los tuyos) ===== -->
-  <section id="servicios" data-v="inicio">
+  <section id="servicios">
     <div class="wrap">
       <div class="head-center">
-        <h2>Vídeo y fotografía a medida</h2>
+        <h2 data-en="Video and photography, tailored to you">Vídeo y fotografía a medida</h2>
       </div>
       <div class="services">
         <article class="service">
-          <div class="pic"><img src="images/servicio-1-700.jpg" srcset="images/servicio-1-700.jpg 700w, images/servicio-1.jpg 1400w" sizes="(max-width: 760px) 104px, (max-width: 900px) 40vw, 380px" style="--pos:50% 80%" alt="Vaso de cerveza sobre una platanera, con el racimo de plátanos de fondo" width="1400" height="1050" loading="lazy" decoding="async"></div>
-          <div><h3>Empresas y marcas</h3><p>Vídeo corporativo, producto, eventos y campañas, con un mensaje claro y un acabado cuidado.</p></div>
+          <div class="pic"><img src="images/servicio-1-700.jpg" srcset="images/servicio-1-700.jpg 700w, images/servicio-1.jpg 1400w" sizes="(max-width: 760px) 104px, (max-width: 900px) 40vw, 380px" style="--pos:50% 80%" alt="Vaso de cerveza sobre una platanera, con el racimo de plátanos de fondo" data-en-alt="Glass of beer on a banana plant, with the bunch of bananas in the background" width="1400" height="1050" loading="lazy" decoding="async"></div>
+          <div><h3 data-en="Businesses and brands">Empresas y marcas</h3><p data-en="Corporate video, product films, events and campaigns, with a clear message and a polished finish.">Vídeo corporativo, producto, eventos y campañas, con un mensaje claro y un acabado cuidado.</p></div>
         </article>
         <article class="service">
-          <div class="pic"><img src="images/servicio-2-700.jpg" srcset="images/servicio-2-700.jpg 700w, images/servicio-2.jpg 1400w" sizes="(max-width: 760px) 104px, (max-width: 900px) 40vw, 380px" alt="Retrato de una chica sentada junto a una pared blanca" width="1400" height="1050" loading="lazy" decoding="async"></div>
-          <div><h3>Particulares</h3><p>Retratos y reportajes para personas, parejas y familias, con las fotos editadas y listas para usar.</p></div>
+          <div class="pic"><img src="images/servicio-2-700.jpg" srcset="images/servicio-2-700.jpg 700w, images/servicio-2.jpg 1400w" sizes="(max-width: 760px) 104px, (max-width: 900px) 40vw, 380px" alt="Retrato de una chica sentada junto a una pared blanca" data-en-alt="Portrait of a girl sitting by a white wall" width="1400" height="1050" loading="lazy" decoding="async"></div>
+          <div><h3 data-en="Private clients">Particulares</h3><p data-en="Portraits and reportage for individuals, couples and families, with edited photos ready to use.">Retratos y reportajes para personas, parejas y familias, con las fotos editadas y listas para usar.</p></div>
         </article>
         <article class="service">
-          <div class="pic"><img src="images/servicio-3-700.jpg" srcset="images/servicio-3-700.jpg 700w, images/servicio-3.jpg 1400w" sizes="(max-width: 760px) 104px, (max-width: 900px) 40vw, 380px" alt="Surfista en una ola, fotograma de una pieza corta" width="1400" height="1050" loading="lazy" decoding="async"></div>
-          <div><h3>Piezas cortas</h3><p>Anuncios, presentaciones y contenido para pantalla: formatos breves con ritmo y calidad de cine.</p></div>
+          <div class="pic"><img src="images/servicio-3-700.jpg" srcset="images/servicio-3-700.jpg 700w, images/servicio-3.jpg 1400w" sizes="(max-width: 760px) 104px, (max-width: 900px) 40vw, 380px" alt="Surfista en una ola, fotograma de una pieza corta" data-en-alt="Surfer on a wave, still from a short piece" width="1400" height="1050" loading="lazy" decoding="async"></div>
+          <div><h3 data-en="Short-form content">Piezas cortas</h3><p data-en="Ads, presentations and content for screens: short formats with pace and cinematic quality.">Anuncios, presentaciones y contenido para pantalla: formatos breves con ritmo y calidad de cine.</p></div>
         </article>
       </div>
       <div class="services-note">
-        <p>¿Tu proyecto es distinto? Cuéntamelo y lo planteamos a medida.</p>
-        <a class="btn" href="#contacto">Hablemos</a>
+        <p data-en="Have something different in mind? Tell me about it and we'll tailor it to your project.">¿Tu proyecto es distinto? Cuéntamelo y lo planteamos a medida.</p>
+        <a class="btn" href="#contacto" data-en="Let's talk">Hablemos</a>
       </div>
     </div>
   </section>
@@ -687,52 +696,52 @@ html.paused .rec i { animation: none; }
        src del <video> = clip corto de 5 a 10 s, sin sonido (se reproduce solo).
        La línea pequeña = cliente y tu papel en el proyecto.
        La forma de cada tarjeta (horizontal, vertical, cuadrada) la toma sola del vídeo: no hay que indicarla. -->
-  <section id="trabajos" data-v="trabajos">
+  <section id="trabajos">
     <div class="wrap">
       <div class="head-center">
-        <h2>Producciones destacadas</h2>
+        <h2 data-en="Featured productions">Producciones destacadas</h2>
       </div>
       <div class="works" id="works">
-        <article class="work" style="--ar:0.5625" data-video="videos/video-1-4k.mp4" data-hd="videos/video-1-hd.mp4" data-m="videos/video-1-m.mp4" data-title="Campo de golf Guitiriz">
+        <article class="work" style="--ar:0.5625" data-video="videos/video-1-4k.mp4" data-hd="videos/video-1-hd.mp4" data-m="videos/video-1-m.mp4" data-title="Campo de golf Guitiriz" data-title-en="Guitiriz golf course">
           <video class="work-prev" data-src="videos/video-1-preview.mp4" data-src-m="videos/video-1-preview-m.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
           <img class="poster" src="images/poster-1.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
-          <div class="work-cap"><h3>Campo de golf Guitiriz</h3><span class="mono">Iberik Hoteles · Guion, dirección, rodaje, montaje y color</span></div>
+          <div class="work-cap"><h3 data-en="Guitiriz golf course">Campo de golf Guitiriz</h3><span class="mono" data-en="Iberik Hoteles · Script, direction, filming, editing and color grading">Iberik Hoteles · Guion, dirección, rodaje, montaje y color</span></div>
         </article>
-        <article class="work" style="--ar:1.7778" data-video="videos/video-2-4k.mp4" data-hd="videos/video-2-hd.mp4" data-m="videos/video-2-m.mp4" data-title="Campeonato WSL – Edommo Surf Pro Razo">
+        <article class="work" style="--ar:1.7778" data-video="videos/video-2-4k.mp4" data-hd="videos/video-2-hd.mp4" data-m="videos/video-2-m.mp4" data-title="Campeonato WSL – Edommo Surf Pro Razo" data-title-en="WSL Championship – Edommo Surf Pro Razo">
           <video class="work-prev" data-src="videos/video-2-preview.mp4" data-src-m="videos/video-2-preview-m.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
           <img class="poster" src="images/poster-2.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
-          <div class="work-cap"><h3>Campeonato WSL – Edommo Surf Pro Razo</h3><span class="mono">Agencia Spankys · Rodaje de las mangas</span></div>
+          <div class="work-cap"><h3 data-en="WSL Championship – Edommo Surf Pro Razo">Campeonato WSL – Edommo Surf Pro Razo</h3><span class="mono" data-en="Agencia Spankys · Filming of the heats">Agencia Spankys · Rodaje de las mangas</span></div>
         </article>
-        <article class="work" style="--ar:1.7778" data-video="videos/video-3-4k.mp4" data-hd="videos/video-3-hd.mp4" data-m="videos/video-3-m.mp4" data-title="Vídeo colaborativo con The North Face">
+        <article class="work" style="--ar:1.7778" data-video="videos/video-3-4k.mp4" data-hd="videos/video-3-hd.mp4" data-m="videos/video-3-m.mp4" data-title="Vídeo colaborativo con The North Face" data-title-en="Collaborative video with The North Face">
           <video class="work-prev" data-src="videos/video-3-preview.mp4" data-src-m="videos/video-3-preview-m.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
           <img class="poster" src="images/poster-3.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
-          <div class="work-cap"><h3>Vídeo colaborativo con The North Face</h3><span class="mono">Guion, dirección, rodaje, montaje y color</span></div>
+          <div class="work-cap"><h3 data-en="Collaborative video with The North Face">Vídeo colaborativo con The North Face</h3><span class="mono" data-en="Script, direction, filming, editing and color grading">Guion, dirección, rodaje, montaje y color</span></div>
         </article>
-        <article class="work" style="--ar:1.7778" data-video="videos/video-4-4k.mp4" data-hd="videos/video-4-hd.mp4" data-m="videos/video-4-m.mp4" data-title="Contenido de marca para Swell Surfboards">
+        <article class="work" style="--ar:1.7778" data-video="videos/video-4-4k.mp4" data-hd="videos/video-4-hd.mp4" data-m="videos/video-4-m.mp4" data-title="Contenido de marca para Swell Surfboards" data-title-en="Branded content for Swell Surfboards">
           <video class="work-prev" data-src="videos/video-4-preview.mp4" data-src-m="videos/video-4-preview-m.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
           <img class="poster" src="images/poster-4.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
-          <div class="work-cap"><h3>Contenido de marca para Swell Surfboards</h3><span class="mono">Producción continua</span></div>
+          <div class="work-cap"><h3 data-en="Branded content for Swell Surfboards">Contenido de marca para Swell Surfboards</h3><span class="mono" data-en="Ongoing production">Producción continua</span></div>
         </article>
         <article class="work" style="--ar:0.5625" data-video="videos/video-5-4k.mp4" data-hd="videos/video-5-hd.mp4" data-m="videos/video-5-m.mp4" data-title="SMILE BAND - Caión Surf House vertical">
           <video class="work-prev" data-src="videos/video-5-preview.mp4" data-src-m="videos/video-5-preview-m.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
           <img class="poster" src="images/poster-5.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
-          <div class="work-cap"><h3>SMILE BAND</h3><span class="mono">Caión Surf House · Guion, dirección, rodaje, montaje y color</span></div>
+          <div class="work-cap"><h3>SMILE BAND</h3><span class="mono" data-en="Caión Surf House · Script, direction, filming, editing and color grading">Caión Surf House · Guion, dirección, rodaje, montaje y color</span></div>
         </article>
       </div>
     </div>
   </section>
 
   <!-- ===== CLIENTES (borra toda la sección si no quieres mostrarla) ===== -->
-  <section id="clientes" data-v="inicio">
+  <section id="clientes">
     <div class="wrap">
       <div class="clients">
-        <p class="mono">Han confiado en mí</p>
+        <p class="mono" data-en="Trusted by">Han confiado en mí</p>
         <div class="client-list">
-          <a href="https://www.instagram.com/swell_surfboards_/" target="_blank" rel="noopener" aria-label="Swell Surfboards en Instagram">Swell Surfboards</a>
-          <a href="https://www.instagram.com/agencia_spankys/" target="_blank" rel="noopener" aria-label="Agencia Spankys en Instagram">Agencia Spankys</a>
-          <a href="https://www.instagram.com/iberik.hoteles/" target="_blank" rel="noopener" aria-label="Iberik Hoteles en Instagram">Iberik Hoteles</a>
-          <a href="https://www.instagram.com/seaglassdsign/" target="_blank" rel="noopener" aria-label="Seaglass Design en Instagram">Seaglass Design</a>
-          <a href="https://www.instagram.com/vazvabrand/" target="_blank" rel="noopener" aria-label="VAZVA Brand en Instagram">VAZVA Brand</a>
+          <a href="https://www.instagram.com/swell_surfboards_/" target="_blank" rel="noopener" aria-label="Swell Surfboards en Instagram" data-en-aria-label="Swell Surfboards on Instagram">Swell Surfboards</a>
+          <a href="https://www.instagram.com/agencia_spankys/" target="_blank" rel="noopener" aria-label="Agencia Spankys en Instagram" data-en-aria-label="Agencia Spankys on Instagram">Agencia Spankys</a>
+          <a href="https://www.instagram.com/iberik.hoteles/" target="_blank" rel="noopener" aria-label="Iberik Hoteles en Instagram" data-en-aria-label="Iberik Hoteles on Instagram">Iberik Hoteles</a>
+          <a href="https://www.instagram.com/seaglassdsign/" target="_blank" rel="noopener" aria-label="Seaglass Design en Instagram" data-en-aria-label="Seaglass Design on Instagram">Seaglass Design</a>
+          <a href="https://www.instagram.com/vazvabrand/" target="_blank" rel="noopener" aria-label="VAZVA Brand en Instagram" data-en-aria-label="VAZVA Brand on Instagram">VAZVA Brand</a>
         </div>
       </div>
     </div>
@@ -740,11 +749,11 @@ html.paused .rec i { animation: none; }
 
   <!-- ===== PROCESO (línea de tiempo tipo DaVinci Resolve; los textos son de ejemplo, borra la sección si no la quieres) =====
        Cada paso es un <li class="tl-clip">. El número tras "--w:" es lo ancho que se ve el clip (el reparto entre los cuatro). -->
-  <section id="proceso" data-v="sobre">
+  <section id="proceso">
     <div class="wrap">
       <div class="process-head">
-        <h2>Así trabajo</h2>
-        <p>De la primera conversación a la entrega del vídeo.</p>
+        <h2 data-en="How I work">Así trabajo</h2>
+        <p data-en="From the first conversation to the delivery of the final video.">De la primera conversación a la entrega del vídeo.</p>
       </div>
       <div class="tl" id="tl">
         <div class="tl-grid">
@@ -759,19 +768,19 @@ html.paused .rec i { animation: none; }
             <ol class="tl-clips">
               <li class="tl-clip" style="--w:22">
                 <div class="tl-ct"><span class="tl-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4.5h14a2 2 0 0 1 2 2v8.5a2 2 0 0 1-2 2h-7l-4.5 3.5V17H5a2 2 0 0 1-2-2V6.5a2 2 0 0 1 2-2z"/><path d="M8 9.5h8M8 12.8h5"/></svg></span><span class="tl-n" aria-hidden="true">01</span></div>
-                <div class="tl-txt"><h3>Conversación</h3><p>Entiendo qué necesitas y qué quieres transmitir.</p></div>
+                <div class="tl-txt"><h3 data-en="Conversation">Conversación</h3><p data-en="I learn what you need and what you want to convey.">Entiendo qué necesitas y qué quieres transmitir.</p></div>
               </li>
               <li class="tl-clip" style="--w:24">
                 <div class="tl-ct"><span class="tl-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8.5" height="7" rx="1.8"/><rect x="12.5" y="4" width="8.5" height="7" rx="1.8"/><path d="M3 15.5h18M3 19.5h11"/></svg></span><span class="tl-n" aria-hidden="true">02</span></div>
-                <div class="tl-txt"><h3>Planteamiento</h3><p>Defino la idea, el estilo y el plan de rodaje.</p></div>
+                <div class="tl-txt"><h3 data-en="Planning">Planteamiento</h3><p data-en="I define the idea, the style and the shooting plan.">Defino la idea, el estilo y el plan de rodaje.</p></div>
               </li>
               <li class="tl-clip" style="--w:28">
                 <div class="tl-ct"><span class="tl-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="6.5" width="13" height="11" rx="3"/><path d="m15.5 11 6-3.5v9l-6-3.5"/></svg></span><span class="tl-n" aria-hidden="true">03</span></div>
-                <div class="tl-txt"><h3>Rodaje</h3><p>Grabo con calma y con el equipo adecuado para cada proyecto.</p></div>
+                <div class="tl-txt"><h3 data-en="Shooting">Rodaje</h3><p data-en="I shoot with care, using the right equipment for each project.">Grabo con calma y con el equipo adecuado para cada proyecto.</p></div>
               </li>
               <li class="tl-clip" style="--w:26">
                 <div class="tl-ct"><span class="tl-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="6.5" r="2.6"/><circle cx="6" cy="17.5" r="2.6"/><path d="M8.1 8 20 18M8.1 16 20 6"/></svg></span><span class="tl-n" aria-hidden="true">04</span></div>
-                <div class="tl-txt"><h3>Montaje y entrega</h3><p>Edito, ajusto color y sonido, y te lo entrego listo para usar.</p></div>
+                <div class="tl-txt"><h3 data-en="Editing and delivery">Montaje y entrega</h3><p data-en="I edit, color grade and balance the sound, then deliver it ready to use.">Edito, ajusto color y sonido, y te lo entrego listo para usar.</p></div>
               </li>
             </ol>
             <div class="tl-head" aria-hidden="true"></div>
@@ -782,52 +791,52 @@ html.paused .rec i { animation: none; }
   </section>
 
   <!-- ===== SOBRE MÍ ===== -->
-  <section class="about" id="sobre-mi" data-v="sobre">
+  <section class="about" id="sobre-mi">
     <div class="wrap about-grid">
-      <div class="portrait"><img src="images/retrato.jpg" alt="Retrato de Alejandro Suárez" width="1000" height="1250" loading="lazy" decoding="async"></div>
+      <div class="portrait"><img src="images/retrato.jpg" alt="Retrato de Alejandro Suárez" data-en-alt="Portrait of Alejandro Suárez" width="1000" height="1250" loading="lazy" decoding="async"></div>
       <div>
-        <h2>¡Hola! Soy Alex</h2>
-        <p class="about-role">Filmmaker y fotógrafo en A Coruña</p>
-        <p class="body">Trabajo con empresas y particulares. Realizo producciones de duración media y corta, desde el guion hasta el montaje y el color.</p>
-        <p class="body">Basado en A Coruña, con disponibilidad para desplazarme al lugar donde se desarrolle el proyecto.</p>
+        <h2 data-en="Hi, I'm Alex">¡Hola! Soy Alex</h2>
+        <p class="about-role" data-en="Filmmaker and photographer in A Coruña">Filmmaker y fotógrafo en A Coruña</p>
+        <p class="body" data-en="I work with businesses and private clients, producing short and mid-length films from script to final edit and color grade.">Trabajo con empresas y particulares. Realizo producciones de duración media y corta, desde el guion hasta el montaje y el color.</p>
+        <p class="body" data-en="Based in A Coruña, and available to travel wherever the project takes me.">Basado en A Coruña, con disponibilidad para desplazarme al lugar donde se desarrolle el proyecto.</p>
         <!-- Datos: la etiqueta (arriba) y el dato (debajo). Cámbialos o añade otro bloque igual. -->
         <div class="facts">
-          <div><span class="mono">Mi base</span><b>A Coruña</b></div>
-          <div><span class="mono">Especialidad</span><b>Surf, outdoor y marcas</b></div>
-          <div><span class="mono">Estilo</span><b>Cine, luz natural y color</b></div>
+          <div><span class="mono" data-en="Base">Mi base</span><b>A Coruña</b></div>
+          <div><span class="mono" data-en="Specialty">Especialidad</span><b data-en="Surf, outdoor and brands">Surf, outdoor y marcas</b></div>
+          <div><span class="mono" data-en="Style">Estilo</span><b data-en="Cinematic, natural light and color">Cine, luz natural y color</b></div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ===== CONTACTO ===== -->
-  <section class="contact" id="contacto" data-v="contacto">
+  <section class="contact" id="contacto">
     <div class="wrap">
-      <h2>¿Tienes un proyecto en mente?</h2>
-      <p>Cuéntame qué necesitas y te respondo con una propuesta, sin compromiso.</p>
+      <h2 data-en="Have a project in mind?">¿Tienes un proyecto en mente?</h2>
+      <p data-en="Tell me what you need and I'll reply with a proposal, no obligation.">Cuéntame qué necesitas y te respondo con una propuesta, sin compromiso.</p>
       <!-- El mensaje te llega por correo. Tu correo se cambia SOLO aquí, en action="https://formsubmit.co/fotoalex.raw@gmail.com" -->
       <form class="contact-form" id="contact-form" action="https://formsubmit.co/fotoalex.raw@gmail.com" method="POST" novalidate>
         <div class="cf-row">
-          <div class="cf-field"><label class="mono" for="cf-name">Nombre</label><input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="80" placeholder="Cómo te llamas"></div>
-          <div class="cf-field"><label class="mono" for="cf-email">Tu correo</label><input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="120" placeholder="Para poder responderte"></div>
+          <div class="cf-field"><label class="mono" for="cf-name" data-en="Name">Nombre</label><input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="80" placeholder="Cómo te llamas" data-en-placeholder="Your name"></div>
+          <div class="cf-field"><label class="mono" for="cf-email" data-en="Your email">Tu correo</label><input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="120" placeholder="Para poder responderte" data-en-placeholder="So I can reply to you"></div>
         </div>
-        <div class="cf-field"><label class="mono" for="cf-msg">Mensaje</label><textarea id="cf-msg" name="message" required maxlength="3000" placeholder="Qué necesitas, para cuándo y dónde"></textarea></div>
+        <div class="cf-field"><label class="mono" for="cf-msg" data-en="Message">Mensaje</label><textarea id="cf-msg" name="message" required maxlength="3000" placeholder="Qué necesitas, para cuándo y dónde" data-en-placeholder="What you need, when you need it and where"></textarea></div>
         <div class="cf-hp" aria-hidden="true"><label>No rellenes esto <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
         <input type="hidden" name="_template" value="table">
         <input type="hidden" name="_captcha" value="false">
         <div class="cf-actions">
-          <button class="btn solid send" type="submit">Enviar mensaje</button>
+          <button class="btn solid send" type="submit" data-en="Send message">Enviar mensaje</button>
           <!-- Ejemplo: déjalo solo si es verdad, o bórralo -->
-          <span class="note mono">Respondo en menos de 48 horas</span>
+          <span class="note mono" data-en="I reply within 48 hours">Respondo en menos de 48 horas</span>
         </div>
         <p class="cf-status" id="cf-status" role="status" aria-live="polite"></p>
       </form>
       <div class="cf-done" id="cf-done" hidden tabindex="-1">
-        <h3>Mensaje enviado</h3>
-        <p>Gracias por escribirme. Te respondo en cuanto pueda, normalmente en menos de 48 horas.</p>
+        <h3 data-en="Message sent">Mensaje enviado</h3>
+        <p data-en="Thanks for getting in touch. I'll reply as soon as I can, usually within 48 hours.">Gracias por escribirme. Te respondo en cuanto pueda, normalmente en menos de 48 horas.</p>
       </div>
       <div class="contact-alt">
-        <span class="mono">¿Prefieres Instagram?</span>
+        <span class="mono" data-en="Prefer Instagram?">¿Prefieres Instagram?</span>
         <a class="btn" href="https://www.instagram.com/alexsuarez_11/" target="_blank" rel="noopener">Instagram @alexsuarez_11</a>
       </div>
     </div>
@@ -842,23 +851,86 @@ html.paused .rec i { animation: none; }
   </div>
 </footer>
 
-<nav class="tabbar" id="tabbar" aria-label="Secciones">
-  <a href="#inicio" data-go="inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.2 12 4l8 7.2V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></a>
-  <a href="#trabajos" data-go="trabajos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="3"/><path d="M10.5 9.3v5.4l4.5-2.7z"/></svg><span>Trabajos</span></a>
-  <a href="#fotos" data-go="fotos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="m4.5 17.5 4.8-4.6 3.4 3.2 2.6-2.4 4.2 3.8"/></svg><span>Fotos</span></a>
-  <a href="#sobre-mi" data-go="sobre"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c.6-3.6 3.6-5.6 7-5.6s6.4 2 7 5.6"/></svg><span>Sobre mí</span></a>
-  <a href="#contacto" data-go="contacto"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="3"/><path d="m4.5 7.5 7.5 5.5 7.5-5.5"/></svg><span>Contacto</span></a>
-</nav>
 
-<button class="motion" id="motion" type="button"><span class="motion-ico" aria-hidden="true"></span><span><span class="motion-label">Pausar</span><span class="motion-more"> animaciones</span></span></button>
+<button class="motion" id="motion" type="button"><span class="motion-ico" aria-hidden="true"></span><span><span class="motion-label">Pausar</span><span class="motion-more" data-en=" animations"> animaciones</span></span></button>
 
-<div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Visor">
-  <button class="v-btn v-close" type="button" id="v-close">Cerrar ×</button>
-  <button class="v-btn v-prev" type="button" id="v-prev" aria-label="Anterior">←</button>
+<div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Visor" data-en-aria-label="Viewer">
+  <button class="v-btn v-close" type="button" id="v-close" data-en="Close ×">Cerrar ×</button>
+  <button class="v-btn v-prev" type="button" id="v-prev" aria-label="Anterior" data-en-aria-label="Previous">←</button>
   <div class="stage" id="stage"></div>
-  <button class="v-btn v-next" type="button" id="v-next" aria-label="Siguiente">→</button>
+  <button class="v-btn v-next" type="button" id="v-next" aria-label="Siguiente" data-en-aria-label="Next">→</button>
   <div class="v-info mono" id="v-info"></div>
 </div>
+
+<script>
+/* Idioma: español (por defecto) o inglés.
+   Cada texto en inglés está en el propio HTML, en un atributo  data-en="..."  junto al texto en español
+   (para atributos: data-en-aria-label, data-en-alt, data-en-placeholder, data-en-title). Si cambias un texto
+   en español, cambia también su data-en. La elección del visitante se recuerda. */
+(function () {
+  var KEY = 'idioma', root = document.documentElement;
+  var STR = {
+    es: { pause: 'Pausar', resume: 'Reanudar', close: 'Cerrar ×', closeVideo: 'Cerrar vídeo', play: 'Reproducir: ', sending: 'Enviando…', noMail: 'El formulario aún no tiene un correo asignado.', fail: 'No se ha podido enviar el mensaje. Inténtalo de nuevo o escríbeme a', or: ' o por ' },
+    en: { pause: 'Pause', resume: 'Resume', close: 'Close ×', closeVideo: 'Close video', play: 'Play: ', sending: 'Sending…', noMail: 'The form has no email address set up yet.', fail: 'The message could not be sent. Try again or write to me at', or: ' or on ' }
+  };
+  var META = {
+    es: { title: document.title, desc: (document.querySelector('meta[name="description"]') || {}).content || '' },
+    en: { title: 'Alejandro Suárez · Filmmaker in A Coruña | Photography and video', desc: 'Filmmaker in A Coruña. Photography and video for businesses and private clients: short pieces and full productions with a cinematic finish. I travel wherever the project takes me.' }
+  };
+  var ATTRS = ['aria-label', 'alt', 'placeholder', 'title'];
+  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function first() {
+    var q = (location.search.match(/[?&]lang=(es|en)\b/) || [])[1]; if (q) return q;
+    var s = saved(); if (s === 'es' || s === 'en') return s;
+    return /^en\b/i.test(navigator.language || '') ? 'en' : 'es';
+  }
+  var L = window.L = {
+    lang: 'es',
+    t: function (k) { return STR[L.lang][k]; },
+    title: function (el) { return (L.lang === 'en' && el.getAttribute('data-title-en')) || el.getAttribute('data-title') || ''; },
+    apply: function (scope) {
+      var en = L.lang === 'en', sel = '[data-en]' + ATTRS.map(function (a) { return ',[data-en-' + a + ']'; }).join('');
+      Array.prototype.forEach.call((scope || document).querySelectorAll(sel), function (el) {
+        if (el.hasAttribute('data-en')) {
+          if (!el.hasAttribute('data-es')) el.setAttribute('data-es', el.innerHTML);
+          el.innerHTML = en ? el.getAttribute('data-en') : el.getAttribute('data-es');
+        }
+        ATTRS.forEach(function (a) {
+          var k = 'data-en-' + a; if (!el.hasAttribute(k)) return;
+          if (!el.hasAttribute('data-es-' + a)) el.setAttribute('data-es-' + a, el.getAttribute(a) || '');
+          el.setAttribute(a, en ? el.getAttribute(k) : el.getAttribute('data-es-' + a));
+        });
+      });
+    },
+    set: function (lang, remember) {
+      if (lang !== 'es' && lang !== 'en') return;
+      L.lang = lang; root.lang = lang; L.apply();
+      document.title = META[lang].title;
+      var m = document.querySelector('meta[name="description"]'); if (m && META[lang].desc) m.setAttribute('content', META[lang].desc);
+      Array.prototype.forEach.call(document.querySelectorAll('.lang button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false'); });
+      if (remember) { try { localStorage.setItem(KEY, lang); } catch (e) {} }
+      var ev; try { ev = new Event('langchange'); } catch (e) { ev = document.createEvent('Event'); ev.initEvent('langchange', true, true); }
+      document.dispatchEvent(ev);
+    }
+  };
+  Array.prototype.forEach.call(document.querySelectorAll('.lang button'), function (b) {
+    b.addEventListener('click', function () { L.set(b.getAttribute('data-lang'), true); });
+  });
+  var f = first(); if (f !== 'es') L.set(f, false);
+})();
+
+/* Menú del móvil: botón en la cabecera que abre la lista de secciones */
+(function () {
+  var b = document.getElementById('nav-toggle'), p = document.getElementById('nav-panel'); if (!b || !p) return;
+  function open(v) { p.hidden = !v; b.setAttribute('aria-expanded', v ? 'true' : 'false'); }
+  b.addEventListener('click', function (e) { e.stopPropagation(); open(p.hidden); });
+  p.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('a')) open(false); });
+  document.addEventListener('click', function (e) { if (!p.hidden && !p.contains(e.target) && !b.contains(e.target)) open(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !p.hidden) { open(false); b.focus(); } });
+  window.addEventListener('scroll', function () { if (!p.hidden) open(false); }, { passive: true });
+  window.addEventListener('resize', function () { if (window.innerWidth > 760 && !p.hidden) open(false); });
+})();
+</script>
 
 <script>
 /* Interacciones. No hace falta tocar nada de aquí: el contenido de la web está en el HTML de arriba. */
@@ -899,10 +971,11 @@ html.paused .rec i { animation: none; }
 
   function applyMotion() {
     root.classList.toggle('paused', paused);
-    motionLabel.textContent = paused ? 'Reanudar' : 'Pausar';
+    motionLabel.textContent = L.t(paused ? 'resume' : 'pause');
     videos.forEach(function (v) { if (paused) v.pause(); else if (onScreen.indexOf(v) > -1 && !inOpen(v)) play(v); });
     if (paused) { try { hv.currentTime = 0; } catch (e) {} setTc('00:00:00:00'); }
   }
+  document.addEventListener('langchange', function () { motionLabel.textContent = L.t(paused ? 'resume' : 'pause'); });
   motion.addEventListener('click', function () {
     paused = !paused;
     try { localStorage.setItem(KEY, paused ? '1' : '0'); } catch (e) {}
@@ -940,35 +1013,10 @@ html.paused .rec i { animation: none; }
   ['pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(function (ev) { window.addEventListener(ev, kick, { once: true, passive: true }); });
   applyMotion();
 
-  /* Móvil: cada sección es una pantalla propia (barra inferior). Ordenador: una sola página y el menú marca dónde estás. */
+  /* Pantalla estrecha (móvil): es la misma página, solo cambia la distribución y se piden vídeos más ligeros. */
   var mvq = window.matchMedia('(max-width: 760px)');
-  var VIEW = { inicio: 'inicio', servicios: 'inicio', clientes: 'inicio', trabajos: 'trabajos', fotos: 'fotos', 'sobre-mi': 'sobre', proceso: 'sobre', contacto: 'contacto' };
-  var HASH = { inicio: 'inicio', trabajos: 'trabajos', fotos: 'fotos', sobre: 'sobre-mi', contacto: 'contacto' };
-  var tabs = $$('#tabbar a');
   function isMv() { return !!mvq && mvq.matches; }
-  function setView(v, push) {
-    if (!HASH[v]) v = 'inicio';
-    root.setAttribute('data-view', v);
-    tabs.forEach(function (a) { if (a.getAttribute('data-go') === v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
-    if (push) { try { history.pushState({ v: v }, '', '#' + HASH[v]); } catch (e) {} }
-    if (viewer && !viewer.hidden) closeViewer();
-    if (openedWork) closeWork();
-    try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); } catch (e) { window.scrollTo(0, 0); }
-  }
-  function applyMode() {
-    root.classList.toggle('mv', isMv());
-    if (isMv()) setView(VIEW[(location.hash || '').slice(1)] || root.getAttribute('data-view') || 'inicio', false);
-    else root.removeAttribute('data-view');
-  }
-  document.addEventListener('click', function (e) {
-    var a = e.target.closest && e.target.closest('a[href^="#"]'); if (!a || !isMv()) return;
-    var v = VIEW[a.getAttribute('href').slice(1)]; if (!v) return;
-    e.preventDefault(); setView(v, true);
-  });
-  window.addEventListener('popstate', function () { if (isMv()) setView(VIEW[(location.hash || '').slice(1)] || 'inicio', false); });
-  if (mvq.addEventListener) mvq.addEventListener('change', applyMode); else if (mvq.addListener) mvq.addListener(applyMode);
-  applyMode();
-  /* Ordenador: el menú marca la sección que se está viendo */
+  /* El menú marca la sección que se está viendo */
   var menuLinks = $$('.menu a');
   if ('IntersectionObserver' in window && menuLinks.length) {
     var spy = new IntersectionObserver(function (es) {
@@ -1133,7 +1181,7 @@ html.paused .rec i { animation: none; }
     var fv = document.createElement('video'), ps = $('.poster', w);
     fv.className = 'work-full'; fv.controls = true; fv.playsInline = true; fv.preload = 'auto';
     fv.setAttribute('playsinline', ''); fv.setAttribute('controlslist', 'nodownload');
-    fv.setAttribute('aria-label', w.getAttribute('data-title') || '');
+    fv.setAttribute('aria-label', L.title(w));
     if (ps) fv.poster = ps.getAttribute('src');
     fv.addEventListener('playing', function () { w.classList.add('is-playing'); w.classList.remove('is-loading'); });
     fv.addEventListener('pause', function () { w.classList.remove('is-playing'); });
@@ -1164,7 +1212,7 @@ html.paused .rec i { animation: none; }
   }
   /* En móvil el vídeo se abre en una pantalla propia, a pantalla completa */
   function openVideoModal(w) {
-    var h3 = $('h3', w), title = w.getAttribute('data-title') || (h3 ? h3.textContent : ''), ps = $('.poster', w);
+    var h3 = $('h3', w), title = L.title(w) || (h3 ? h3.textContent : ''), ps = $('.poster', w);
     opener = $('.work-open', w); clearStage(); cur = -1; prev.hidden = next.hidden = true;
     var fv = document.createElement('video');
     fv.controls = true; fv.playsInline = true; fv.autoplay = true; fv.preload = 'auto';
@@ -1199,11 +1247,12 @@ html.paused .rec i { animation: none; }
   works.forEach(function (w) {
     var pv = $('.work-prev', w), h3 = $('h3', w);
     var ar0 = parseFloat(w.style.getPropertyValue('--ar')); if (ar0) w.classList.toggle('is-tall', ar0 <= 1.05);
-    var title = w.getAttribute('data-title') || (h3 ? h3.textContent : '');
+    var title = function () { return L.title(w) || (h3 ? h3.textContent : ''); };
     var go = document.createElement('button'), x = document.createElement('button');
-    go.type = 'button'; go.className = 'work-open'; go.setAttribute('aria-label', 'Reproducir: ' + title); go.setAttribute('aria-expanded', 'false');
+    go.type = 'button'; go.className = 'work-open'; go.setAttribute('aria-label', L.t('play') + title()); go.setAttribute('aria-expanded', 'false');
     go.innerHTML = '<span class="work-play" aria-hidden="true"></span>';
-    x.type = 'button'; x.className = 'v-btn work-close'; x.textContent = 'Cerrar ×'; x.setAttribute('aria-label', 'Cerrar vídeo');
+    x.type = 'button'; x.className = 'v-btn work-close'; x.textContent = L.t('close'); x.setAttribute('aria-label', L.t('closeVideo'));
+    document.addEventListener('langchange', function () { go.setAttribute('aria-label', L.t('play') + title()); x.textContent = L.t('close'); x.setAttribute('aria-label', L.t('closeVideo')); });
     w.appendChild(go); w.appendChild(x);
     go.addEventListener('click', function (e) { e.stopPropagation(); openWork(w); });
     w.addEventListener('pointerenter', function (e) { if (e.pointerType === 'touch') return; px = e.clientX; py = e.clientY; hoverCard = w; arm(w); });
@@ -1391,7 +1440,7 @@ html.paused .rec i { animation: none; }
     status.textContent = text;
     if (!withLinks) return;
     status.appendChild(document.createTextNode(' '));
-    if (to.indexOf('@') > -1) { var a = document.createElement('a'); a.href = 'mailto:' + to; a.textContent = to; status.appendChild(a); status.appendChild(document.createTextNode(' o por ')); }
+    if (to.indexOf('@') > -1) { var a = document.createElement('a'); a.href = 'mailto:' + to; a.textContent = to; status.appendChild(a); status.appendChild(document.createTextNode(L.t('or'))); }
     var ig = document.createElement('a'); ig.href = 'https://www.instagram.com/alexsuarez_11/'; ig.target = '_blank'; ig.rel = 'noopener'; ig.textContent = 'Instagram'; status.appendChild(ig); status.appendChild(document.createTextNode('.'));
   }
   function ok() {
@@ -1404,11 +1453,11 @@ html.paused .rec i { animation: none; }
     cfg();
     var f = new FormData(form);
     if (f.get('_honey')) { ok(); return; }                       // un robot rellenó el campo oculto: se ignora
-    if (!ready) { say('El formulario aún no tiene un correo asignado.'); return; }
+    if (!ready) { say(L.t('noMail')); return; }
     var name = String(f.get('name')).trim(), email = String(f.get('email')).trim();
     var body = { name: name, email: email, message: String(f.get('message')).trim(), _replyto: email,
       _subject: 'Nuevo mensaje de ' + name + ' desde tu web', _template: 'table', _captcha: 'false' };
-    btn.disabled = true; say('Enviando…');
+    btn.disabled = true; say(L.t('sending'));
     var ctl = ('AbortController' in window) ? new AbortController() : null;
     var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 20000);
     fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(body), signal: ctl ? ctl.signal : undefined })
@@ -1418,7 +1467,7 @@ html.paused .rec i { animation: none; }
         });
       })
       .then(ok)
-      .catch(function () { say('No se ha podido enviar el mensaje. Inténtalo de nuevo o escríbeme a', true); })
+      .catch(function () { say(L.t('fail'), true); })
       .then(function () { clearTimeout(timer); btn.disabled = false; });
   });
 })();
