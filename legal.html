@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aviso legal, privacidad y cookies · Alejandro Suárez</title>
+<meta name="description" content="Aviso legal, política de privacidad y cookies de la web de Alejandro Suárez, filmmaker en A Coruña.">
+<meta name="theme-color" content="#0e1113">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230e1113'/%3E%3Ctext x='16' y='23' font-family='Arial,Helvetica,sans-serif' font-weight='700' font-size='20' text-anchor='middle' fill='%23ece8e1'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="fonts/albert-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+
+<!-- =====================================================================================
+     RELLENA SOLO ESTAS DOS LÍNEAS (entre las comillas) con tus datos y guarda el archivo.
+     Se muestran en el Aviso legal y en la Política de privacidad. Deja las comillas.
+     ===================================================================================== -->
+<script>
+var DATOS = {
+  nif:       "54155391M",
+  domicilio: "Rúa o Ribeiro 8"
+};
+</script>
+
+<script>
+/* Elige el idioma antes de pintar: ?lang=es|en, si no el que eligió el visitante en la web, si no el del navegador */
+(function () {
+  var l = (location.search.match(/[?&]lang=(es|en)\b/) || [])[1], s = null;
+  try { s = localStorage.getItem('idioma'); } catch (e) {}
+  if (!l) l = (s === 'es' || s === 'en') ? s : (/^en\b/i.test(navigator.language || '') ? 'en' : 'es');
+  document.documentElement.lang = l;
+})();
+</script>
+
+<style>
+@font-face {
+  font-family: "Albert Sans";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/albert-sans-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+:root {
+  --bg: #0e1113; --panel: #161a1d; --ink: #ece8e1; --muted: #9aa1a4; --line: #262c30; --rec: #e5382b;
+  --r-md: 14px; --font: "Albert Sans", "Helvetica Neue", Arial, sans-serif;
+  --glass: rgba(236, 232, 225, .06); --glass-line: rgba(236, 232, 225, .18);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 88px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 17px; line-height: 1.65; }
+a { color: var(--ink); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.wrap { width: min(100% - 32px, 760px); margin-inline: auto; }
+
+.top { position: sticky; top: 0; z-index: 5; background: rgba(14, 17, 19, .82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; }
+.back { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; border: 1px solid var(--glass-line); border-radius: var(--r-md); background: var(--glass); font-weight: 500; font-size: 15px; text-decoration: none; color: var(--ink); }
+.back:hover { background: rgba(236, 232, 225, .12); }
+.lang { display: inline-flex; gap: 2px; padding: 3px; border-radius: var(--r-md); background: var(--glass); border: 1px solid var(--glass-line); }
+.lang button { min-width: 34px; height: 34px; padding: 0 8px; border: 0; border-radius: 10px; background: transparent; color: rgba(236, 232, 225, .6); font: 600 12px/1 var(--font); letter-spacing: .08em; cursor: pointer; }
+.lang button:hover { color: var(--ink); }
+.lang button[aria-pressed="true"] { color: var(--ink); background: rgba(236, 232, 225, .13); }
+
+main { padding-block: 40px 56px; }
+.nav-legal { display: flex; flex-wrap: wrap; gap: 8px 10px; margin: 0 0 36px; }
+.nav-legal a { padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; font-size: 15px; text-decoration: none; color: var(--muted); }
+.nav-legal a:hover { color: var(--ink); border-color: var(--glass-line); }
+
+section { padding-block: 8px 28px; }
+section + section { border-top: 1px solid var(--line); padding-top: 36px; }
+h1, h2 { margin: 0 0 14px; font-weight: 600; text-transform: uppercase; letter-spacing: .02em; line-height: 1.15; }
+h1 { font-size: clamp(26px, 5.5vw, 38px); margin-bottom: 28px; }
+h2 { font-size: clamp(22px, 4.6vw, 30px); }
+h3 { margin: 26px 0 6px; font-size: 18px; font-weight: 600; }
+p { margin: 0 0 14px; color: color-mix(in srgb, var(--ink) 88%, var(--bg)); }
+.upd { color: var(--muted); font-size: 15px; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 22px; margin: 18px 0 8px; padding: 18px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-md); }
+dt { color: var(--muted); }
+dd { margin: 0; overflow-wrap: anywhere; }
+.warn { display: none; margin: 0 0 24px; padding: 14px 16px; border: 1px solid var(--rec); border-radius: var(--r-md); color: var(--ink); background: rgba(229, 56, 43, .12); }
+.warn.on { display: block; }
+html[lang="en"] .es, html[lang="es"] .en { display: none; }
+footer { padding-block: 24px calc(30px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); color: var(--muted); font-size: 15px; }
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  dl { grid-template-columns: 1fr; gap: 0; }
+  dd { margin-bottom: 10px; }
+  main { padding-top: 28px; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="back" href="index.html"><span aria-hidden="true">←</span> <span class="es">Volver a la web</span><span class="en">Back to the site</span></a>
+    <div class="lang" role="group" aria-label="Idioma / Language">
+      <button type="button" data-lang="es" lang="es" aria-pressed="true" title="Español">ES</button>
+      <button type="button" data-lang="en" lang="en" aria-pressed="false" title="English">EN</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="warn" id="warn" role="alert">⚠ Faltan datos por rellenar en este archivo (DNI y domicilio, al principio de legal.html). No publiques la web hasta completarlos.</p>
+
+  <nav class="nav-legal" aria-label="Secciones">
+    <a href="#aviso-legal"><span class="es">Aviso legal</span><span class="en">Legal notice</span></a>
+    <a href="#privacidad"><span class="es">Privacidad</span><span class="en">Privacy policy</span></a>
+    <a href="#cookies"><span class="es">Cookies</span><span class="en">Cookies</span></a>
+  </nav>
+
+  <!-- ===================================== AVISO LEGAL ===================================== -->
+  <section id="aviso-legal">
+    <div class="es">
+      <h1>Aviso legal</h1>
+      <p>En cumplimiento del artículo 10 de la Ley 34/2002, de servicios de la sociedad de la información y de comercio electrónico (LSSI-CE), se facilitan los datos del titular de este sitio web.</p>
+      <dl>
+        <dt>Titular</dt><dd>Alejandro Suárez Viqueira</dd>
+        <dt>NIF</dt><dd data-f="nif">XXXX-DNI</dd>
+        <dt>Domicilio</dt><dd data-f="domicilio">XXXX-DOMICILIO</dd>
+        <dt>Correo electrónico</dt><dd><a href="mailto:fotoalex.raw@gmail.com">fotoalex.raw@gmail.com</a></dd>
+        <dt>Sitio web</dt><dd>alexsuarezfoto.github.io</dd>
+        <dt>Actividad</dt><dd>Servicios de fotografía y vídeo</dd>
+      </dl>
+      <h3>Condiciones de uso</h3>
+      <p>El acceso a este sitio web es gratuito. Al usarlo te comprometes a hacerlo de forma lícita, sin perjudicar a terceros ni al funcionamiento de la web.</p>
+      <h3>Propiedad intelectual</h3>
+      <p>Las fotografías, los vídeos, los textos y el diseño de esta web pertenecen a su titular, salvo que se indique otra cosa, y están protegidos por la normativa de propiedad intelectual. Queda prohibido reproducirlos, distribuirlos o modificarlos sin autorización por escrito. Los nombres y marcas de clientes que aparecen pertenecen a sus propietarios y se mencionan solo para indicar que se ha trabajado con ellos.</p>
+      <h3>Responsabilidad</h3>
+      <p>El titular procura que la información de la web sea correcta y esté actualizada, pero no garantiza que no haya errores ni interrupciones. No se hace responsable del contenido de las webs de terceros a las que enlaza, como Instagram.</p>
+      <h3>Legislación aplicable</h3>
+      <p>Este aviso se rige por la legislación española. Para cualquier conflicto serán competentes los juzgados y tribunales que correspondan según la normativa aplicable.</p>
+    </div>
+    <div class="en">
+      <h1>Legal notice</h1>
+      <p>In accordance with Article 10 of Spanish Law 34/2002 on information society services and electronic commerce (LSSI-CE), the details of the owner of this website are provided below.</p>
+      <dl>
+        <dt>Owner</dt><dd>Alejandro Suárez Viqueira</dd>
+        <dt>Tax ID (NIF)</dt><dd data-f="nif">XXXX-DNI</dd>
+        <dt>Address</dt><dd data-f="domicilio">XXXX-DOMICILIO</dd>
+        <dt>Email</dt><dd><a href="mailto:fotoalex.raw@gmail.com">fotoalex.raw@gmail.com</a></dd>
+        <dt>Website</dt><dd>alexsuarezfoto.github.io</dd>
+        <dt>Activity</dt><dd>Photography and video services</dd>
+      </dl>
+      <h3>Terms of use</h3>
+      <p>Access to this website is free. By using it, you agree to do so lawfully and without harming third parties or the operation of the site.</p>
+      <h3>Intellectual property</h3>
+      <p>The photographs, videos, texts and design of this website belong to its owner, unless stated otherwise, and are protected by intellectual property law. They may not be reproduced, distributed or modified without written permission. The names and brands of clients that appear belong to their owners and are mentioned only to show that I have worked with them.</p>
+      <h3>Liability</h3>
+      <p>The owner aims to keep the information on this site accurate and up to date, but does not guarantee that it is free of errors or interruptions. The owner is not responsible for the content of third-party websites linked from here, such as Instagram.</p>
+      <h3>Governing law</h3>
+      <p>This notice is governed by Spanish law. Any dispute will be handled by the courts that are competent under the applicable rules.</p>
+      <p class="upd">The Spanish version of this notice prevails in case of discrepancy.</p>
+    </div>
+  </section>
+
+  <!-- ================================ POLÍTICA DE PRIVACIDAD ================================ -->
+  <section id="privacidad">
+    <div class="es">
+      <h2>Política de privacidad</h2>
+      <p>Aquí te explico qué hago con los datos que me envías a través del formulario de contacto.</p>
+      <h3>Responsable</h3>
+      <dl>
+        <dt>Nombre</dt><dd>Alejandro Suárez Viqueira</dd>
+        <dt>NIF</dt><dd data-f="nif">XXXX-DNI</dd>
+        <dt>Domicilio</dt><dd data-f="domicilio">XXXX-DOMICILIO</dd>
+        <dt>Correo electrónico</dt><dd><a href="mailto:fotoalex.raw@gmail.com">fotoalex.raw@gmail.com</a></dd>
+      </dl>
+      <h3>Qué datos trato</h3>
+      <p>Tu nombre, tu correo electrónico y el mensaje que escribes en el formulario. No te pido nada más. Además, el servicio que aloja la web (GitHub Pages) puede registrar datos técnicos de tu visita, como la dirección IP, según su propia política de privacidad; yo no tengo acceso a esos datos.</p>
+      <h3>Para qué los uso</h3>
+      <p>Solo para responder a tu consulta y, si me lo pides, prepararte una propuesta. No los uso para publicidad ni boletines, no elaboro perfiles ni tomo decisiones automatizadas.</p>
+      <h3>Por qué puedo tratarlos</h3>
+      <p>Por tu consentimiento, que das al enviar el formulario, y, si tu consulta es para contratar mis servicios, por la aplicación de medidas precontractuales a petición tuya (artículo 6.1.a y 6.1.b del Reglamento (UE) 2016/679, RGPD).</p>
+      <h3>Cuánto tiempo los conservo</h3>
+      <p>El tiempo necesario para atender tu consulta. Si acabas contratando, los conservo durante los plazos que exige la ley (por ejemplo, los fiscales). Si no, los elimino cuando dejan de ser necesarios.</p>
+      <h3>Quién más los recibe</h3>
+      <p>Tu mensaje se envía mediante FormSubmit (formsubmit.co), un servicio que reenvía formularios por correo, y llega a mi bandeja de Gmail (Google). Estos proveedores pueden tratar datos fuera del Espacio Económico Europeo, y FormSubmit no detalla en su política las garantías que aplica. Si prefieres no usar el formulario, puedes escribirme directamente a <a href="mailto:fotoalex.raw@gmail.com">fotoalex.raw@gmail.com</a> o por Instagram. No cedo tus datos a nadie más, salvo obligación legal.</p>
+      <h3>Tus derechos</h3>
+      <p>Puedes pedirme acceso a tus datos, que los rectifique o los suprima, oponerte a su tratamiento, limitarlo o recibirlos en un formato portable, y retirar tu consentimiento en cualquier momento escribiendo a <a href="mailto:fotoalex.raw@gmail.com">fotoalex.raw@gmail.com</a>. Si crees que no he tratado bien tus datos, puedes reclamar ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es" target="_blank" rel="noopener">aepd.es</a>).</p>
+    </div>
+    <div class="en">
+      <h2>Privacy policy</h2>
+      <p>Here is what I do with the data you send me through the contact form.</p>
+      <h3>Data controller</h3>
+      <dl>
+        <dt>Name</dt><dd>Alejandro Suárez Viqueira</dd>
+        <dt>Tax ID (NIF)</dt><dd data-f="nif">XXXX-DNI</dd>
+        <dt>Address</dt><dd data-f="domicilio">XXXX-DOMICILIO</dd>
+        <dt>Email</dt><dd><a href="mailto:fotoalex.raw@gmail.com">fotoalex.raw@gmail.com</a></dd>
+      </dl>
+      <h3>What data I process</h3>
+      <p>Your name, your email address and the message you write in the form. I ask for nothing else. In addition, the service that hosts this website (GitHub Pages) may record technical data about your visit, such as your IP address, under its own privacy policy; I have no access to that data.</p>
+      <h3>What I use it for</h3>
+      <p>Only to answer your enquiry and, if you ask, to prepare a proposal for you. I do not use it for advertising or newsletters, and I do not build profiles or make automated decisions.</p>
+      <h3>Legal basis</h3>
+      <p>Your consent, which you give by submitting the form and, if your enquiry is about hiring my services, pre-contractual measures taken at your request (Article 6.1.a and 6.1.b of Regulation (EU) 2016/679, GDPR).</p>
+      <h3>How long I keep it</h3>
+      <p>For as long as needed to deal with your enquiry. If you end up hiring me, I keep it for the periods the law requires (for example, tax records). Otherwise I delete it once it is no longer needed.</p>
+      <h3>Who else receives it</h3>
+      <p>Your message is sent through FormSubmit (formsubmit.co), a service that forwards forms by email, and arrives in my Gmail inbox (Google). These providers may process data outside the European Economic Area, and FormSubmit does not detail in its policy the safeguards it applies. If you prefer not to use the form, you can write to me directly at <a href="mailto:fotoalex.raw@gmail.com">fotoalex.raw@gmail.com</a> or on Instagram. I do not share your data with anyone else, unless required by law.</p>
+      <h3>Your rights</h3>
+      <p>You can ask me for access to your data, to correct or delete it, to object to its processing, to restrict it, or to receive it in a portable format, and you can withdraw your consent at any time by writing to <a href="mailto:fotoalex.raw@gmail.com">fotoalex.raw@gmail.com</a>. If you believe your data has not been handled properly, you can complain to the Spanish Data Protection Agency (<a href="https://www.aepd.es" target="_blank" rel="noopener">aepd.es</a>).</p>
+      <p class="upd">The Spanish version of this policy prevails in case of discrepancy.</p>
+    </div>
+  </section>
+
+  <!-- ===================================== COOKIES ===================================== -->
+  <section id="cookies">
+    <div class="es">
+      <h2>Cookies y almacenamiento</h2>
+      <p>Esta web no usa cookies de analítica, de publicidad ni de terceros.</p>
+      <p>Solo guarda en tu navegador (en su almacenamiento local) dos preferencias, y únicamente si las eliges tú: el idioma (ES o EN) y si pausas las animaciones. Sirven solo para recordar tu elección, no te identifican ni se comparten con nadie, y por eso no necesitan tu consentimiento. Puedes borrarlas cuando quieras desde los ajustes de tu navegador.</p>
+      <p>Las tipografías y los vídeos se sirven desde la propia web. Si pulsas un enlace a Instagram, esa red aplica su propia política.</p>
+      <p class="upd">Última actualización: 12 de noviembre de 2026.</p>
+    </div>
+    <div class="en">
+      <h2>Cookies and storage</h2>
+      <p>This website does not use analytics, advertising or third-party cookies.</p>
+      <p>It only saves two preferences in your browser (in its local storage), and only if you choose them yourself: your language (ES or EN) and whether you pause the animations. They are used only to remember your choice, they do not identify you and are not shared with anyone, so they do not require your consent. You can delete them at any time from your browser settings.</p>
+      <p>Fonts and videos are served from this website itself. If you follow a link to Instagram, that network applies its own policy.</p>
+      <p class="upd">Last updated: 12 November 2026.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">© 2026 Alejandro Suárez Viqueira</div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  /* Datos del titular (se escriben una sola vez arriba, en DATOS) */
+  var pend = false;
+  ['nif', 'domicilio'].forEach(function (k) {
+    var v = (window.DATOS && DATOS[k]) || '';
+    if (!v || /^XXXX/i.test(v)) pend = true;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-f="' + k + '"]'), function (el) { el.textContent = v; });
+  });
+  document.getElementById('warn').classList.toggle('on', pend);
+
+  /* Selector de idioma (usa la misma clave que la web principal, para que se recuerde la elección) */
+  var TITLE = { es: 'Aviso legal, privacidad y cookies · Alejandro Suárez', en: 'Legal notice, privacy and cookies · Alejandro Suárez' };
+  function set(lang, remember) {
+    root.lang = lang; document.title = TITLE[lang];
+    Array.prototype.forEach.call(document.querySelectorAll('.lang button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false'); });
+    if (remember) { try { localStorage.setItem('idioma', lang); } catch (e) {} }
+  }
+  set(root.lang === 'en' ? 'en' : 'es', false);
+  Array.prototype.forEach.call(document.querySelectorAll('.lang button'), function (b) {
+    b.addEventListener('click', function () { set(b.getAttribute('data-lang'), true); });
+  });
+})();
+</script>
+</body>
+</html>

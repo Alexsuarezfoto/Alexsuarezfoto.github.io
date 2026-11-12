@@ -423,6 +423,8 @@ section { padding-block: clamp(56px, 7vw, 96px) 0; }
 .contact .btn.send:disabled { opacity: .55; cursor: progress; }
 .contact .cf-status { margin: 0; max-width: none; min-height: 1.5em; font-size: 15px; line-height: 1.5; color: var(--muted); }
 .contact .cf-status a { color: var(--ink); text-underline-offset: 3px; }
+.contact .cf-legal { margin: 0; max-width: none; font-size: 13px; line-height: 1.55; color: var(--muted); text-align: center; }
+.contact .cf-legal a { color: var(--ink); text-underline-offset: 3px; }
 .contact .cf-done { max-width: 640px; margin: 36px auto 0; padding: clamp(28px, 5vw, 44px) clamp(20px, 4vw, 40px); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg); }
 .contact .cf-done h3 { margin: 0; font-weight: 600; font-size: clamp(20px, 2.4vw, 26px); letter-spacing: .01em; text-transform: uppercase; }
 .contact .cf-done p { margin: 10px auto 0; max-width: 40ch; color: var(--muted); }
@@ -433,6 +435,7 @@ footer { padding-block: 32px calc(30px + env(safe-area-inset-bottom, 0px)); }
 footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--muted); }
 footer a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--line); }
 footer a:hover { color: var(--ink); border-color: var(--ink); }
+.foot-legal { display: inline-flex; flex-wrap: wrap; gap: 6px 18px; }
 
 /* Botón fijo que acompaña al hacer scroll: pausa los vídeos y el sello, y muestra las fotos de portada */
 .motion { position: fixed; z-index: 45; right: max(14px, env(safe-area-inset-right, 0px)); bottom: max(14px, env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 10px; padding: 10px 15px; background: var(--glass); color: var(--ink); border: 1px solid var(--glass-line); border-radius: var(--r-md); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: var(--glass-edge), 0 8px 24px rgba(0, 0, 0, .25); font-family: var(--font); font-weight: 500; font-size: 14px; cursor: pointer; transition: border-color .2s, background .2s, transform .25s; }
@@ -828,6 +831,7 @@ html.paused .rec i { animation: none; }
           <!-- Ejemplo: déjalo solo si es verdad, o bórralo -->
           <span class="note mono" data-en="I reply within 48 hours">Respondo en menos de 48 horas</span>
         </div>
+        <p class="cf-legal" data-en='Data controller: Alejandro Suárez Viqueira. Purpose: to answer your enquiry. You can access, correct or delete your data and exercise your other rights. More information in the <a href="legal.html#privacidad">privacy policy</a>.'>Responsable: Alejandro Suárez Viqueira. Finalidad: responder a tu consulta. Puedes acceder a tus datos, rectificarlos o suprimirlos y ejercer tus demás derechos. Más información en la <a href="legal.html#privacidad">política de privacidad</a>.</p>
         <p class="cf-status" id="cf-status" role="status" aria-live="polite"></p>
       </form>
       <div class="cf-done" id="cf-done" hidden tabindex="-1">
@@ -846,6 +850,7 @@ html.paused .rec i { animation: none; }
   <div class="wrap">
     <span class="mono">Alejandro Suárez · A Coruña</span>
     <a class="mono" href="https://www.instagram.com/alexsuarez_11/" target="_blank" rel="noopener">Instagram</a>
+    <span class="foot-legal"><a class="mono" href="legal.html#aviso-legal" data-en="Legal notice">Aviso legal</a><a class="mono" href="legal.html#privacidad" data-en="Privacy">Privacidad</a><a class="mono" href="legal.html#cookies" data-en="Cookies">Cookies</a></span>
     <span class="mono">© 2026</span>
   </div>
 </footer>
