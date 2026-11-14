@@ -474,11 +474,10 @@ html.paused .rec i { animation: none; }
 /* ===== Tablet ===== */
 @media (max-width: 900px) {
   .hero { height: calc(clamp(540px, 84svh, 760px) + var(--hdr)); }
-  .services { grid-template-columns: minmax(0, 1fr); }
-  .service { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 16px; align-items: center; }
-  .service h3 { margin-top: 0; }
-  .about-grid { grid-template-columns: minmax(0, 1fr); }
-  .portrait { max-width: 420px; }
+  .services { gap: 20px; }
+  .service h3 { font-size: 17px; margin: 14px 0 6px; }
+  .service p { font-size: 14.5px; }
+  .about-grid { gap: 28px 36px; }
   .v-prev, .v-next { top: auto; bottom: max(54px, calc(env(safe-area-inset-bottom, 0px) + 44px)); margin-top: 0; }
 }
 @media (max-width: 560px) {
@@ -511,11 +510,8 @@ html.paused .rec i { animation: none; }
   .head-center { margin-bottom: 18px; }
   h2 { font-size: clamp(22px, 6.2vw, 27px); }
   .services { gap: 14px; }
-  .service { grid-template-columns: 104px minmax(0, 1fr); gap: 14px; }
   .service .pic { border-radius: 14px; }
-  .service img { aspect-ratio: 1 / 1; }
-  .service h3 { font-size: 17px; margin: 0 0 4px; }
-  .service p { font-size: 14px; line-height: 1.45; }
+  .service p { line-height: 1.45; }
   .services-note { margin-top: 22px; gap: 12px; justify-content: flex-start; text-align: left; }
   .services-note p { font-size: 16px; }
   .clients { padding: 16px; gap: 12px; border-radius: 16px; }
@@ -524,7 +520,7 @@ html.paused .rec i { animation: none; }
   .works { --gap: 10px; }
   .row-head { margin-bottom: 14px; }
   .about-grid { gap: 18px; }
-  .portrait { max-width: 360px; margin-inline: auto; width: 100%; border-radius: 16px; }
+  .portrait { width: 100%; border-radius: 16px; }
   .about p.body { margin-top: 12px; font-size: 15.5px; }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; margin-top: 20px; padding-top: 18px; }
   .process-head p { margin-top: 8px; }
@@ -550,6 +546,41 @@ html.paused .rec i { animation: none; }
   .works .work { grid-column: span 2; max-height: none; width: auto; margin: 0; }
   .works .work.is-tall { grid-column: span 1; }
   .works-br { display: none; }
+}
+
+/* ===== Tablet pequeña (iPad mini en vertical, tablets de 7-8 pulgadas): mismo diseño de tres columnas y dos columnas en "Sobre mí" ===== */
+@media (min-width: 641px) and (max-width: 760px) {
+  .service { grid-template-columns: none; }
+  .service img { aspect-ratio: 4 / 3; }
+  .service h3 { font-size: 16.5px; margin: 12px 0 5px; }
+  .service p { font-size: 14px; }
+  .services { gap: 16px; }
+  .portrait { max-width: none; margin-inline: 0; }
+  .about-grid { gap: 26px 30px; }
+  .about p.body { font-size: 15.5px; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* ===== Pantalla estrecha de verdad (móvil en vertical): una columna ===== */
+@media (max-width: 640px) {
+  .services { grid-template-columns: minmax(0, 1fr); }
+  .service { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 14px; align-items: center; }
+  .service h3 { margin: 0 0 4px; font-size: 17px; }
+  .service img { aspect-ratio: 1 / 1; }
+  .service p { font-size: 14px; }
+  .about-grid { grid-template-columns: minmax(0, 1fr); }
+  .portrait { max-width: 360px; margin-inline: auto; }
+}
+/* ===== Pantalla muy baja en horizontal (móvil o tablet pequeña girados): la portada cabe entera, con el titular y los botones a la vista ===== */
+@media (max-height: 560px) and (orientation: landscape) {
+  .hero { height: max(100svh, 330px); }
+  .hero-inner { padding-block: calc(8px + var(--hdr)) 14px; }
+  .stamp { width: 56px; }
+  .stamp b { font-size: 13px; }
+  h1 .big { font-size: clamp(22px, 7.4vh, 32px); }
+  .hero-lead { margin-top: 6px; font-size: 14.5px; max-width: 52ch; }
+  .hero-btns { margin-top: 10px; gap: 10px; }
+  .hero-btns .btn { padding-block: 9px; }
+  section { padding-block-start: 40px; }
 }
 
 /* ===== Pantallas grandes (2K y 4K): el contenido y las letras crecen con la pantalla ===== */
@@ -689,15 +720,15 @@ html.paused .rec i { animation: none; }
       </div>
       <div class="services">
         <article class="service">
-          <div class="pic"><img src="images/servicio-1-700.jpg" srcset="images/servicio-1-700.jpg 700w, images/servicio-1.jpg 1400w" sizes="(max-width: 760px) 104px, (max-width: 900px) 40vw, 380px" style="--pos:50% 80%" alt="Vaso de cerveza sobre una platanera, con el racimo de plátanos de fondo" data-en-alt="Glass of beer on a banana plant, with the bunch of bananas in the background" width="1400" height="1050" loading="lazy" decoding="async"></div>
+          <div class="pic"><img src="images/servicio-1-700.jpg" srcset="images/servicio-1-700.jpg 700w, images/servicio-1.jpg 1400w" sizes="(max-width: 640px) 104px, (max-width: 1100px) 33vw, 380px" style="--pos:50% 80%" alt="Vaso de cerveza sobre una platanera, con el racimo de plátanos de fondo" data-en-alt="Glass of beer on a banana plant, with the bunch of bananas in the background" width="1400" height="1050" loading="lazy" decoding="async"></div>
           <div><h3 data-en="Businesses and brands">Empresas y marcas</h3><p data-en="Corporate video, product films, events and campaigns, with a clear message and a polished finish.">Vídeo corporativo, producto, eventos y campañas, con un mensaje claro y un acabado cuidado.</p></div>
         </article>
         <article class="service">
-          <div class="pic"><img src="images/servicio-2-700.jpg" srcset="images/servicio-2-700.jpg 700w, images/servicio-2.jpg 1400w" sizes="(max-width: 760px) 104px, (max-width: 900px) 40vw, 380px" alt="Retrato de una chica sentada junto a una pared blanca" data-en-alt="Portrait of a girl sitting by a white wall" width="1400" height="1050" loading="lazy" decoding="async"></div>
+          <div class="pic"><img src="images/servicio-2-700.jpg" srcset="images/servicio-2-700.jpg 700w, images/servicio-2.jpg 1400w" sizes="(max-width: 640px) 104px, (max-width: 1100px) 33vw, 380px" alt="Retrato de una chica sentada junto a una pared blanca" data-en-alt="Portrait of a girl sitting by a white wall" width="1400" height="1050" loading="lazy" decoding="async"></div>
           <div><h3 data-en="Private clients">Particulares</h3><p data-en="Portraits and reportage for individuals, couples and families, with edited photos ready to use.">Retratos y reportajes para personas, parejas y familias, con las fotos editadas y listas para usar.</p></div>
         </article>
         <article class="service">
-          <div class="pic"><img src="images/servicio-3-700.jpg" srcset="images/servicio-3-700.jpg 700w, images/servicio-3.jpg 1400w" sizes="(max-width: 760px) 104px, (max-width: 900px) 40vw, 380px" alt="Surfista en una ola, fotograma de una pieza corta" data-en-alt="Surfer on a wave, still from a short piece" width="1400" height="1050" loading="lazy" decoding="async"></div>
+          <div class="pic"><img src="images/servicio-3-700.jpg" srcset="images/servicio-3-700.jpg 700w, images/servicio-3.jpg 1400w" sizes="(max-width: 640px) 104px, (max-width: 1100px) 33vw, 380px" alt="Surfista en una ola, fotograma de una pieza corta" data-en-alt="Surfer on a wave, still from a short piece" width="1400" height="1050" loading="lazy" decoding="async"></div>
           <div><h3 data-en="Short-form content">Piezas cortas</h3><p data-en="Ads, presentations and content for screens: short formats with pace and cinematic quality.">Anuncios, presentaciones y contenido para pantalla: formatos breves con ritmo y calidad de cine.</p></div>
         </article>
       </div>
@@ -1008,18 +1039,19 @@ html.paused .rec i { animation: none; }
   /* Los vídeos de las tarjetas no se descargan hasta que están cerca de la pantalla (y en móvil se pide la versión pequeña) */
   function ensureSrc(v) {
     if (v.getAttribute('src') || !v.getAttribute('data-src')) return;
-    v.src = ((isMv() || isPhone()) && v.getAttribute('data-src-m')) || v.getAttribute('data-src');
+    v.src = ((isMv() || isPhone() || isTouch()) && v.getAttribute('data-src-m')) || v.getAttribute('data-src');
     var card = v.parentNode;
     if (card && card.classList) v.addEventListener('playing', function () { card.classList.add('is-ready'); }, { once: true });
   }
-  /* En móvil, como mucho 2 previsualizaciones a la vez (las más cercanas al centro de la pantalla): así va más fluido */
+  /* En móvil, como mucho 2 previsualizaciones a la vez (3 en tablet táctil), las más cercanas al centro de la pantalla: así va más fluido */
   function balance() {
-    if (paused || !(isMv() || isPhone())) return;
+    if (paused || !(isMv() || isPhone() || isTouch())) return;
+    var lim = (isMv() || isPhone()) ? 2 : 3;
     var c = onScreen.filter(function (v) { return v.classList.contains('work-prev') && !inOpen(v); });
     var mid = window.innerHeight / 2;
     var d = function (v) { var r = v.getBoundingClientRect(); return Math.abs(r.top + r.height / 2 - mid); };
     c.sort(function (a, b) { return d(a) - d(b); });
-    c.forEach(function (v, i) { if (i < 2) { if (v.paused) play(v); } else if (!v.paused) v.pause(); });
+    c.forEach(function (v, i) { if (i < lim) { if (v.paused) play(v); } else if (!v.paused) v.pause(); });
   }
   /* Los vídeos solo se reproducen mientras se ven en pantalla */
   if ('IntersectionObserver' in window) {
@@ -1139,12 +1171,13 @@ html.paused .rec i { animation: none; }
      altura parecida; así, con 5, 4 o 6 producciones siempre se forma un rectángulo, sin una tarjeta suelta debajo. */
   var rowSig = '';
   function partition(ars, W, gap, cap) {
-    var n = ars.length, target = Math.min(330 * (W > 1600 ? 1.35 : W > 1300 ? 1.15 : 1), Math.max(190, W * 0.26)), best = [0], from = [0], i, j, k, sum, h, l, cost;
+    var n = ars.length, target = Math.min(330 * (W > 1600 ? 1.35 : W > 1300 ? 1.15 : 1), Math.max(190, W * 0.26)), best = [0], from = [0], i, j, k, sum, h, l, cost, mn;
     for (j = 1; j <= n; j++) {
-      best[j] = Infinity; sum = 0;
+      best[j] = Infinity; sum = 0; mn = Infinity;
       for (i = j - 1; i >= 0; i--) {
-        sum += ars[i]; h = (W - gap * (j - i - 1)) / sum; l = Math.log(h / target);
-        cost = l * l + (h > cap ? 4 : 0) + (h < 110 ? 4 : 0) + (j - i === 1 && n > 1 ? 6 : 0) - 0.002 * (n - i) * Math.log(h);   /* a igualdad, la fila más alta va arriba */
+        sum += ars[i]; mn = Math.min(mn, ars[i]); h = (W - gap * (j - i - 1)) / sum; l = Math.log(h / target);
+        cost = l * l + (h > cap ? 4 : 0) + (h < 110 ? 4 : 0) + (j - i === 1 && n > 1 ? (W < 1000 ? 2.5 : 6) : 0) - 0.002 * (n - i) * Math.log(h);   /* a igualdad, la fila más alta va arriba */
+        if (mn * h < 140) cost += 25 * (1 - mn * h / 140);   /* la tarjeta más estrecha de la fila (una vertical) no baja de unos 140 px: se ve y se toca bien en tablet */
         if (best[i] + cost < best[j] - 1e-9) { best[j] = best[i] + cost; from[j] = i; }
       }
     }
