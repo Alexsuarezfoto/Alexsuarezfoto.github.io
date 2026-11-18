@@ -330,13 +330,13 @@ section { padding-block: clamp(56px, 7vw, 96px) 0; }
 /* Fotogramas: tira de película */
 .row-head .kicker { margin-bottom: 8px; }
 .row-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
-/* Flechas a los lados de la película: apenas se ven y solo aparecen si hay más fotos en esa dirección */
+/* Flechas a los lados de la película: discretas pero visibles; solo aparecen si hay más fotos en esa dirección */
 .film { position: relative; }
-.film-nav { position: absolute; top: 0; bottom: 0; z-index: 5; display: flex; align-items: center; width: clamp(52px, 7vw, 92px); padding: 0 clamp(8px, 1.4vw, 18px); border: 0; cursor: pointer; color: var(--ink); opacity: .38; transition: opacity .3s; -webkit-tap-highlight-color: transparent; }
-.film-prev { left: 0; justify-content: flex-start; background: linear-gradient(to right, rgba(8, 9, 10, .5), rgba(8, 9, 10, 0)); }
-.film-next { right: 0; justify-content: flex-end; background: linear-gradient(to left, rgba(8, 9, 10, .5), rgba(8, 9, 10, 0)); }
-.film-nav svg { width: clamp(26px, 2.6vw, 34px); height: auto; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 5px rgba(0, 0, 0, .7)); transition: transform .25s; }
-.film:hover .film-nav { opacity: .62; }
+.film-nav { position: absolute; top: 0; bottom: 0; z-index: 5; display: flex; align-items: center; width: clamp(52px, 7vw, 92px); padding: 0 clamp(8px, 1.4vw, 18px); border: 0; cursor: pointer; color: var(--ink); opacity: .64; transition: opacity .3s; -webkit-tap-highlight-color: transparent; }
+.film-prev { left: 0; justify-content: flex-start; background: linear-gradient(to right, rgba(8, 9, 10, .58), rgba(8, 9, 10, 0)); }
+.film-next { right: 0; justify-content: flex-end; background: linear-gradient(to left, rgba(8, 9, 10, .58), rgba(8, 9, 10, 0)); }
+.film-nav svg { width: clamp(30px, 3vw, 40px); height: auto; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px rgba(0, 0, 0, .85)); transition: transform .25s; }
+.film:hover .film-nav { opacity: .85; }
 .film-nav:hover, .film-nav:focus-visible { opacity: 1; }
 .film-prev:hover svg { transform: translateX(-3px); }
 .film-next:hover svg { transform: translateX(3px); }
@@ -702,7 +702,7 @@ html.paused .rec i { animation: none; }
         <button class="frame" type="button"><span class="pic"><img src="images/foto-05-1600.jpg" srcset="images/foto-05-800.jpg 800w, images/foto-05-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-05.jpg" style="--pos:50% 50%" alt="Guitarrista con sombrero y gafas de sol tocando en un escenario al aire libre" data-en-alt="Guitarist in a hat and sunglasses playing on an outdoor stage" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">Smile Band</span><span class="cap-place" data-en="Event · 2025">Evento · 2025</span></span></span></button>
         <button class="frame" type="button"><span class="pic"><img src="images/foto-06-1600.jpg" srcset="images/foto-06-800.jpg 800w, images/foto-06-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-06.jpg" style="--pos:50% 50%" alt="Mujer sentada junto a una tabla de surf en una caseta de madera" data-en-alt="Woman sitting beside a surfboard in a wooden hut" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">VAZVA</span><span class="cap-place" data-en="Promotional · 2026">Promoción · 2026</span></span></span></button>
         <button class="frame" type="button"><span class="pic"><img src="images/foto-07-1600.jpg" srcset="images/foto-07-800.jpg 800w, images/foto-07-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-07.jpg" style="--pos:50% 50%" alt="Mujer con un ramo de flores secas delante de una tela blanca, entre vegetación" data-en-alt="Woman holding a bouquet of dried flowers in front of a white sheet, among greenery" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title">Seaglass Design</span><span class="cap-place" data-en="Promotional · 2025">Promoción · 2025</span></span></span></button>
-        <button class="frame" type="button"><span class="pic"><img src="images/foto-08-1600.jpg" srcset="images/foto-08-800.jpg 800w, images/foto-08-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-08.jpg" style="--pos:50% 34%" alt="Retrato en blanco y negro de una joven sentada en el suelo" data-en-alt="Black-and-white portrait of a young woman sitting on the floor" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title" data-en="Portfolio">Book fotográfico</span><span class="cap-place" data-en="Promotional">Promoción</span></span></span></button>
+        <button class="frame" type="button"><span class="pic"><img src="images/foto-08-1600.jpg" srcset="images/foto-08-800.jpg 800w, images/foto-08-1600.jpg 1600w" sizes="(max-width: 760px) 290px, (max-width: 1799px) 420px, 560px" data-full="images/foto-08.jpg" style="--pos:50% 34%" alt="Retrato en blanco y negro de una joven sentada en el suelo" data-en-alt="Black-and-white portrait of a young woman sitting on the floor" width="1800" height="1200" loading="lazy" decoding="async"><span class="cap"><span class="cap-title" data-en="Book fotográfico">Book fotográfico</span><span class="cap-place" data-en="Promotional">Promoción</span></span></span></button>
       </div>
     </div>
     </div>
@@ -1092,11 +1092,39 @@ html.paused .rec i { animation: none; }
 
   /* Flechas de la tira de fotos */
   var track = $('#track'), tPrev = $('#t-prev'), tNext = $('#t-next');
-  /* Cada pulsación avanza uno o dos fotogramas según el ancho de pantalla */
+  /* Cada pulsación avanza uno o dos fotogramas según el ancho de pantalla.
+     El avance es una animación propia: arranca despacio, coge velocidad y frena suave, como una película que se desliza.
+     Si se pulsa varias veces seguidas, sigue desde donde iba. Si la persona toca o gira la rueda, se detiene al momento. */
+  var glideId = 0, glideTo = null;
+  function glideStop() {
+    if (glideId) { cancelAnimationFrame(glideId); glideId = 0; }
+    glideTo = null; track.style.scrollSnapType = '';
+  }
+  function glideTrack(to) {
+    var from = track.scrollLeft;
+    if (Math.abs(to - from) < 1) { glideStop(); return; }
+    if (glideId) { cancelAnimationFrame(glideId); glideId = 0; }
+    glideTo = to; track.style.scrollSnapType = 'none';
+    var dist = to - from, dur = Math.min(1200, 520 + Math.abs(dist) * .5), t0 = null;
+    function ease(p) { return p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; }
+    function tick(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min(1, (ts - t0) / dur);
+      track.scrollLeft = from + dist * ease(p);
+      if (p < 1) glideId = requestAnimationFrame(tick);
+      else { glideId = 0; glideTo = null; track.scrollLeft = to; }
+    }
+    glideId = requestAnimationFrame(tick);
+  }
+  ['touchstart', 'wheel', 'pointerdown'].forEach(function (ev) { track.addEventListener(ev, glideStop, { passive: true }); });
   function stepFilm(dir) {
     var f = $('#reel .frame'); if (!f) return;
-    var w = f.offsetWidth, n = Math.max(1, Math.round(track.clientWidth / w - 1));
-    track.scrollBy({ left: dir * n * w, behavior: reduce || paused ? 'auto' : 'smooth' });
+    var w = f.getBoundingClientRect().width, n = Math.max(1, Math.round(track.clientWidth / w - 1));
+    var max = track.scrollWidth - track.clientWidth;
+    var base = glideTo !== null ? glideTo : track.scrollLeft;
+    var to = Math.max(0, Math.min(max, (Math.round(base / w) + dir * n) * w));
+    if (reduce) { track.scrollLeft = to; return; }
+    glideTrack(to);
   }
   tPrev.addEventListener('click', function () { stepFilm(-1); });
   tNext.addEventListener('click', function () { stepFilm(1); });
