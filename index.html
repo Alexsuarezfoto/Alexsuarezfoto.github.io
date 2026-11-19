@@ -42,6 +42,7 @@
   "description": "Fotógrafo y filmmaker en A Coruña, ingeniero de diseño industrial. Fotografía y vídeo para empresas y particulares.",
   "workLocation": { "@type": "Place", "address": { "@type": "PostalAddress", "addressLocality": "A Coruña", "addressRegion": "Galicia", "addressCountry": "ES" } },
   "url": "https://alexsuarez.es/",
+  "telephone": "+34639762752",
   "mainEntityOfPage": "https://alexsuarez.es/",
   "image": "https://alexsuarez.es/images/social.jpg",
   "sameAs": ["https://www.instagram.com/alexsuarez_11/"],
@@ -449,6 +450,7 @@ section { padding-block: clamp(56px, 7vw, 96px) 0; }
 .contact .cf-done p { margin: 10px auto 0; max-width: 40ch; color: var(--muted); }
 .contact-alt { display: grid; justify-items: center; gap: 14px; max-width: 640px; margin: clamp(36px, 5vw, 52px) auto 0; padding-top: clamp(26px, 4vw, 36px); border-top: 1px solid var(--line); }
 .contact-alt .mono { color: var(--muted); }
+.alt-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 
 footer { padding-block: 32px calc(30px + env(safe-area-inset-bottom, 0px)); }
 footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--muted); }
@@ -906,9 +908,14 @@ html.paused .rec i { animation: none; }
         <h3 data-en="Message sent">Mensaje enviado</h3>
         <p data-en="Thanks for getting in touch. I'll reply as soon as I can, usually within 48 hours.">Gracias por escribirme. Te respondo en cuanto pueda, normalmente en menos de 48 horas.</p>
       </div>
+      <!-- Otras vías de contacto. El teléfono está en dos sitios: el enlace de WhatsApp (wa.me/34…, sin + ni espacios) y el de llamada (tel:+34…). -->
       <div class="contact-alt">
-        <span class="mono" data-en="Prefer Instagram?">¿Prefieres Instagram?</span>
-        <a class="btn" href="https://www.instagram.com/alexsuarez_11/" target="_blank" rel="noopener">Instagram @alexsuarez_11</a>
+        <span class="mono" data-en="Prefer another way?">¿Prefieres otra vía?</span>
+        <div class="alt-btns">
+          <a class="btn" href="https://wa.me/34639762752" target="_blank" rel="noopener" aria-label="Escríbeme por WhatsApp" data-en-aria-label="Message me on WhatsApp">WhatsApp</a>
+          <a class="btn" href="tel:+34639762752" aria-label="Llamar al +34 639 762 752" data-en-aria-label="Call +34 639 762 752">+34 639 762 752</a>
+          <a class="btn" href="https://www.instagram.com/alexsuarez_11/" target="_blank" rel="noopener">Instagram @alexsuarez_11</a>
+        </div>
       </div>
     </div>
   </section>
@@ -1541,7 +1548,7 @@ html.paused .rec i { animation: none; }
 
 /* Estadísticas (Umami, sin cookies). Si Umami no carga (bloqueador de anuncios, sin conexión) la web funciona igual.
    Eventos que se registran: "Sección …" (una sección estuvo en pantalla al menos 1 s), "Foto abierta", "Vídeo abierto",
-   "Clic Instagram" y "Formulario enviado" (solo cuando el mensaje ha salido de verdad). No se guarda nada personal. */
+   "Clic Instagram", "Clic WhatsApp", "Clic Teléfono" y "Formulario enviado" (solo cuando el mensaje ha salido de verdad). No se guarda nada personal. */
 (function () {
   var q = [], poll = 0, tries = 0;
   function flush() {
@@ -1577,6 +1584,8 @@ html.paused .rec i { animation: none; }
     if (f) { track('Foto abierta', { foto: frames.indexOf(f) + 1 }); return; }
     var o = t.closest('.work-open');
     if (o) { var w = o.closest('.work'); track('Vídeo abierto', { titulo: (w && w.getAttribute('data-title')) || '' }); return; }
+    if (t.closest('a[href^="https://wa.me/"]')) { track('Clic WhatsApp'); return; }
+    if (t.closest('a[href^="tel:"]')) { track('Clic Teléfono'); return; }
     var a = t.closest('a[href*="instagram.com"]');
     if (a) { var m = (a.getAttribute('href') || '').match(/instagram\.com\/([^/?#]+)/); track('Clic Instagram', { perfil: m ? m[1] : '' }); }
   }, true);
