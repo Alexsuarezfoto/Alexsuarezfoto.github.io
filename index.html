@@ -10,8 +10,12 @@
      2. La web ya es pública: no lleva la etiqueta "noindex", así que Google puede mostrarla.
         (Para esconderla otra vez de los buscadores, añade <meta name="robots" content="noindex"> aquí.)
      3. La ciudad (A Coruña) ya está en el título, la descripción y los datos para Google. Si cambias de base, cámbiala en esos tres sitios. -->
-<title>Alejandro Suárez · Filmmaker en A Coruña | Fotografía y vídeo</title>
-<meta name="description" content="Filmmaker e ingeniero de diseño industrial en A Coruña. Fotografía y vídeo para empresas y particulares: piezas cortas y proyectos completos con acabado de cine. Me muevo donde haga falta.">
+<title>Alex Suárez · Fotógrafo y filmmaker en A Coruña</title>
+<meta name="description" content="Alex Suárez, fotógrafo y filmmaker en A Coruña. Fotografía y vídeo para empresas y particulares: piezas cortas y proyectos completos con acabado de cine.">
+<meta name="author" content="Alex Suárez">
+<meta name="robots" content="index, follow, max-image-preview:large, max-video-preview:-1">
+<!-- Verificación de la web en Google Search Console (no la quites: si la quitas, Google deja de dar acceso a las estadísticas de búsqueda) -->
+<meta name="google-site-verification" content="Cwu0ccUPnA5Or74jopA-Pc3dvky8uzQFKxXBjqDWurQ" />
 <link rel="canonical" href="https://alexsuarez.es/">
 <meta name="theme-color" content="#0e1113">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230e1113'/%3E%3Ctext x='16' y='23' font-family='Arial,Helvetica,sans-serif' font-weight='700' font-size='20' text-anchor='middle' fill='%23ece8e1'%3EA%3C/text%3E%3C/svg%3E">
@@ -19,9 +23,9 @@
 <!-- Vista previa al compartir el enlace (Instagram, WhatsApp, LinkedIn...) -->
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_ES">
-<meta property="og:site_name" content="Alejandro Suárez">
-<meta property="og:title" content="Alejandro Suárez · Filmmaker en A Coruña">
-<meta property="og:description" content="Fotografía y vídeo para empresas y particulares. Piezas cortas y proyectos completos con acabado de cine.">
+<meta property="og:site_name" content="Alex Suárez">
+<meta property="og:title" content="Alex Suárez · Fotógrafo y filmmaker en A Coruña">
+<meta property="og:description" content="Alex Suárez: fotografía y vídeo para empresas y particulares en A Coruña. Piezas cortas y proyectos completos con acabado de cine.">
 <meta property="og:url" content="https://alexsuarez.es/">
 <meta property="og:image" content="https://alexsuarez.es/images/social.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -31,15 +35,29 @@
 {
   "@context": "https://schema.org",
   "@type": "Person",
-  "name": "Alejandro Suárez",
-  "alternateName": "Alex Suárez",
-  "jobTitle": "Filmmaker",
-  "description": "Filmmaker e ingeniero de diseño industrial en A Coruña. Fotografía y vídeo para empresas y particulares.",
+  "@id": "https://alexsuarez.es/#alex",
+  "name": "Alex Suárez",
+  "alternateName": ["Alejandro Suárez", "Alex Suárez foto"],
+  "jobTitle": "Fotógrafo y filmmaker",
+  "description": "Fotógrafo y filmmaker en A Coruña, ingeniero de diseño industrial. Fotografía y vídeo para empresas y particulares.",
   "workLocation": { "@type": "Place", "address": { "@type": "PostalAddress", "addressLocality": "A Coruña", "addressRegion": "Galicia", "addressCountry": "ES" } },
   "url": "https://alexsuarez.es/",
+  "mainEntityOfPage": "https://alexsuarez.es/",
   "image": "https://alexsuarez.es/images/social.jpg",
   "sameAs": ["https://www.instagram.com/alexsuarez_11/"],
   "knowsAbout": ["Fotografía", "Vídeo", "Producción audiovisual", "Diseño industrial"]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://alexsuarez.es/#web",
+  "url": "https://alexsuarez.es/",
+  "name": "Alex Suárez",
+  "alternateName": ["alexsuarez.es", "Alex Suárez foto"],
+  "inLanguage": ["es", "en"],
+  "publisher": { "@id": "https://alexsuarez.es/#alex" }
 }
 </script>
 
@@ -898,7 +916,7 @@ html.paused .rec i { animation: none; }
 
 <footer>
   <div class="wrap">
-    <span class="mono">Alejandro Suárez · A Coruña</span>
+    <span class="mono">Alex Suárez · A Coruña</span>
     <a class="mono" href="https://www.instagram.com/alexsuarez_11/" target="_blank" rel="noopener">Instagram</a>
     <span class="foot-legal"><a class="mono" href="legal.html#aviso-legal" data-en="Legal notice">Aviso legal</a><a class="mono" href="legal.html#privacidad" data-en="Privacy">Privacidad</a><a class="mono" href="legal.html#cookies" data-en="Cookies">Cookies</a></span>
     <span class="mono">© 2026</span>
@@ -929,7 +947,7 @@ html.paused .rec i { animation: none; }
   };
   var META = {
     es: { title: document.title, desc: (document.querySelector('meta[name="description"]') || {}).content || '' },
-    en: { title: 'Alejandro Suárez · Filmmaker in A Coruña | Photography and video', desc: 'Filmmaker and industrial design engineer in A Coruña. Photography and video for businesses and private clients: short pieces and full productions with a cinematic finish. I travel wherever the project takes me.' }
+    en: { title: 'Alex Suárez · Photographer and filmmaker in A Coruña', desc: 'Alex Suárez, photographer and filmmaker in A Coruña. Photography and video for businesses and private clients: short pieces and full productions with a cinematic finish.' }
   };
   var ATTRS = ['aria-label', 'alt', 'placeholder', 'title'];
   function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
