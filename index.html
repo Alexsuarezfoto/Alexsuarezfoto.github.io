@@ -602,6 +602,8 @@ html.paused .rec i { animation: none; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } .stamp svg, .rec i { animation: none; } }
 </style>
+<!-- Estadísticas de visitas: Umami Cloud (sin cookies). Solo cuenta en alexsuarez.es, no en pruebas locales. -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="496132da-e026-4dab-b417-7681883feb89" data-domains="alexsuarez.es,www.alexsuarez.es"></script>
 </head>
 <body>
 
@@ -1519,6 +1521,49 @@ html.paused .rec i { animation: none; }
   if (sec) setTimeout(function () { sec.scrollIntoView({ block: 'start' }); }, 350);
 })();
 
+/* Estadísticas (Umami, sin cookies). Si Umami no carga (bloqueador de anuncios, sin conexión) la web funciona igual.
+   Eventos que se registran: "Sección …" (una sección estuvo en pantalla al menos 1 s), "Foto abierta", "Vídeo abierto",
+   "Clic Instagram" y "Formulario enviado" (solo cuando el mensaje ha salido de verdad). No se guarda nada personal. */
+(function () {
+  var q = [], poll = 0, tries = 0;
+  function flush() {
+    if (!(window.umami && window.umami.track)) return false;
+    while (q.length) { var a = q.shift(); try { window.umami.track(a[0], a[1]); } catch (e) {} }
+    return true;
+  }
+  function track(name, data) {
+    q.push([name, data]);
+    if (flush() || poll) return;
+    poll = setInterval(function () { if (flush() || ++tries > 25) { clearInterval(poll); q.length = 0; } }, 300);
+  }
+  window.alexTrack = track;
+
+  var SEC = { 'inicio': 'Inicio', 'fotos': 'Fotografías', 'servicios': 'Servicios', 'trabajos': 'Trabajos', 'clientes': 'Clientes', 'proceso': 'Proceso', 'sobre-mi': 'Sobre mí', 'contacto': 'Contacto' };
+  if ('IntersectionObserver' in window) {
+    var timers = {};
+    var seen = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        var id = e.target.id;
+        if (e.isIntersecting) {
+          if (!timers[id]) timers[id] = setTimeout(function () { seen.unobserve(e.target); track('Sección ' + SEC[id]); }, 1000);
+        } else if (timers[id]) { clearTimeout(timers[id]); timers[id] = 0; }
+      });
+    }, { rootMargin: '-40% 0px -40% 0px' });
+    Object.keys(SEC).forEach(function (id) { var el = document.getElementById(id); if (el) seen.observe(el); });
+  }
+
+  var frames = Array.prototype.slice.call(document.querySelectorAll('#fotos .frame'));
+  document.addEventListener('click', function (e) {
+    var t = e.target; if (!t || !t.closest) return;
+    var f = t.closest('#fotos .frame');
+    if (f) { track('Foto abierta', { foto: frames.indexOf(f) + 1 }); return; }
+    var o = t.closest('.work-open');
+    if (o) { var w = o.closest('.work'); track('Vídeo abierto', { titulo: (w && w.getAttribute('data-title')) || '' }); return; }
+    var a = t.closest('a[href*="instagram.com"]');
+    if (a) { var m = (a.getAttribute('href') || '').match(/instagram\.com\/([^/?#]+)/); track('Clic Instagram', { perfil: m ? m[1] : '' }); }
+  }, true);
+})();
+
 /* Formulario de contacto: envía el mensaje a tu correo sin salir de la web.
    Usa Web3Forms (web3forms.com): la web manda los datos con fetch y Web3Forms los reenvía a tu correo; confirma enseguida
    si el mensaje ha salido. La clave (access_key) está en el campo oculto del formulario: no es secreta, está pensada para ir en la web.
@@ -1590,7 +1635,7 @@ html.paused .rec i { animation: none; }
           if (!r.ok || j.success !== true) { try { console.warn('Formulario:', r.status, j.message || ''); } catch (x) {} throw new Error('envio'); }
         });
       })
-      .then(function () { if (finished) return; finished = true; clearTimeout(guard); end(); ok(); })
+      .then(function () { if (finished) return; finished = true; clearTimeout(guard); end(); try { if (window.alexTrack) window.alexTrack('Formulario enviado'); } catch (x) {} ok(); })
       .catch(function () { if (finished) return; finished = true; clearTimeout(guard); end(); say(L.t('fail'), true, true); });
   });
 })();
