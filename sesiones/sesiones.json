@@ -10,10 +10,12 @@
     "entregaHoras": 24,
     "_entregaHoras": "Plazo en horas, tras confirmar el pago, en el que envías las fotos. Aparece en la web y en las condiciones.",
     "pago": {
-      "modo": "manual",
-      "_modo": "'manual' = el pedido te llega por correo y tú escribes al cliente con las instrucciones de pago (no hay redirección). 'enlace' = envía el pedido a tu correo y lleva al comprador a la página de pago de abajo. 'demo' = no cobra nada ni envía nada (para probar).",
+      "modo": "enlace",
+      "_modo": "'manual' = el pedido te llega por correo y la web muestra tu Bizum directo (no hay redirección). 'enlace' = envía el pedido a tu correo y lleva al comprador a la página de pago de abajo. 'demo' = no cobra nada ni envía nada (para probar).",
       "proveedor": "Stripe",
-      "enlace": "",
+      "enlace": "https://buy.stripe.com/28E7sEe4j8uD2PF8JhgEg00?prefilled_amount={totalCents}&client_reference_id={ref}&locale={lang}",
+      "bizumStripe": false,
+      "_bizumStripe": "Pon true solo cuando Stripe apruebe Bizum (Ajustes > Métodos de pago). Cambia el texto que ven los clientes ('tarjeta, Apple Pay o Google Pay' → '… o Bizum').",
       "_enlace": "Plantilla del enlace de pago. Se sustituye {total} (25.00), {totalCents} (2500), {ref} (código del pedido) y {lang} (es o en). Ejemplo Stripe: https://buy.stripe.com/XXXXXXXX?prefilled_amount={totalCents}&client_reference_id={ref}&locale={lang}   Ejemplo PayPal.me: https://www.paypal.me/TUUSUARIO/{total}EUR"
     },
     "version": "2026-11",

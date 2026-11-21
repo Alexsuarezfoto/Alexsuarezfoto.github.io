@@ -55,7 +55,7 @@
       factsWhat: 'Qué recibes', factsWhatT: 'Las fotos que elijas, en alta resolución (JPG) y sin marca de agua.',
       factsWhen: 'Cuándo', factsWhenT: 'Por correo electrónico, en un máximo de {h} horas desde que se confirme el pago.',
       factsUse: 'Uso', factsUseT: 'Personal y no comercial. Si necesitas otro uso, escríbeme antes.',
-      factsPay: 'Pago', factsPayT: 'En la página segura de {p}. Yo no veo ni guardo los datos de tu tarjeta.',
+      factsPay: 'Pago', factsPayT: 'Con {m} en la página segura de {p}. Yo no veo ni guardo los datos de tu tarjeta.', payM0: 'tarjeta, Apple Pay o Google Pay', payM1: 'tarjeta, Apple Pay, Google Pay o Bizum',
       waLead: '¿Prefieres hablarlo por WhatsApp?', waBtn: 'Escríbeme por WhatsApp', waCart: 'Hola Alex, quiero estas fotos: {c}.', waMany: 'Hola Alex, quiero {n} fotos de tu web (te paso los números a continuación).', waDone: 'Hola Alex, acabo de hacer el pedido {r} en tu web.',
       factsPayM: 'Por Bizum al 639 762 752. Al enviar el pedido verás el importe exacto y el concepto que tienes que poner. En esta web no se cobra nada.', paySmallM: 'Después de enviar el pedido pagas por Bizum.',
       manualT: 'Pedido recibido', manualP: 'Haz ahora el pago por Bizum con los datos de abajo. En cuanto lo vea, te envío las fotos por correo a {e} en un máximo de {h} horas. Si no te llegan, mira la carpeta de spam o escríbeme a',
@@ -94,7 +94,7 @@
       factsWhat: 'What you get', factsWhatT: 'The photos you choose, in full resolution (JPG) and without a watermark.',
       factsWhen: 'When', factsWhenT: 'By email, within {h} hours at most from the moment the payment is confirmed.',
       factsUse: 'Use', factsUseT: 'Personal and non-commercial. If you need another use, write to me first.',
-      factsPay: 'Payment', factsPayT: 'On {p}’s secure page. I never see or store your card details.',
+      factsPay: 'Payment', factsPayT: 'By {m} on {p}’s secure page. I never see or store your card details.', payM0: 'card, Apple Pay or Google Pay', payM1: 'card, Apple Pay, Google Pay or Bizum',
       waLead: 'Prefer to talk it over on WhatsApp?', waBtn: 'Message me on WhatsApp', waCart: 'Hi Alex, I would like these photos: {c}.', waMany: 'Hi Alex, I would like {n} photos from your website (I will send you the numbers next).', waDone: 'Hi Alex, I have just placed order {r} on your website.',
       factsPayM: 'By Bizum to 639 762 752. When you send the order you will see the exact amount and the reference to include. Nothing is charged on this website.', paySmallM: 'After you send the order you pay by Bizum.',
       manualT: 'Order received', manualP: 'Now make the payment by Bizum using the details below. As soon as I see it, I will email the photos to {e} within {h} hours at most. If they do not arrive, check your spam folder or write to me at',
@@ -490,12 +490,12 @@
     hint.hidden = !hint.textContent;
     var facts = $('facts'); clear(facts);
     [['factsWhat', 'factsWhatT'], ['factsWhen', 'factsWhenT'], ['factsUse', 'factsUseT'], ['factsPay', p.modo === 'manual' ? 'factsPayM' : 'factsPayT'], ['factsWith', 'factsWithT']].forEach(function (k) {
-      facts.appendChild(el('li', null, [el('b', { text: T(k[0]) + ': ' }), T(k[1], { h: hours(), p: p.proveedor || 'Stripe' })]));
+      facts.appendChild(el('li', null, [el('b', { text: T(k[0]) + ': ' }), T(k[1], { h: hours(), p: p.proveedor || 'Stripe', m: T(p.bizumStripe ? 'payM1' : 'payM0') })]));
     });
     $('pay').textContent = T('payBtn');
     var wl = $('wa-link');
     if (wl) { $('wa-lead').textContent = T('waLead'); wl.textContent = T('waBtn'); wl.setAttribute('href', waUrl(waCartText(items))); }
-    $('pay-small').textContent = p.modo === 'demo' ? '' : (p.modo === 'manual' ? T('paySmallM') : T('factsPayT', { p: p.proveedor || 'Stripe' }));
+    $('pay-small').textContent = p.modo === 'demo' ? '' : (p.modo === 'manual' ? T('paySmallM') : T('factsPayT', { p: p.proveedor || 'Stripe', m: T(p.bizumStripe ? 'payM1' : 'payM0') }));
   }
 
   function copyText(s, done) {
@@ -557,7 +557,7 @@
     L.push('PEDIDO ' + ref);
     L.push('Total: ' + (q.total / 100).toFixed(2).replace('.', ',') + ' EUR (IVA incluido)');
     if (p.modo === 'manual') L.push('Pago: PENDIENTE  →  el cliente debe pagar por Bizum a tu número (' + BIZUM + ') con el concepto ' + ref + '. Envía las fotos cuando veas el Bizum con exactamente este total. Si no puede usar Bizum, responde a este correo o escríbele por WhatsApp.');
-    else L.push('Pago: ' + (p.proveedor || '—') + '  →  comprueba que el importe cobrado coincide con este total antes de enviar las fotos.');
+    else L.push('Pago: PENDIENTE DE COMPROBAR en ' + (p.proveedor || 'Stripe') + '  →  busca un cobro con la referencia ' + ref + ' por exactamente este total antes de enviar las fotos. Si no aparece cobrado, el cliente no ha pagado: no envíes nada.');
     L.push('Cliente: ' + name + ' <' + email + '>');
     L.push('Idioma de la web: ' + lang);
     L.push('');
