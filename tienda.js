@@ -438,6 +438,19 @@
     var t = T('waCart', { c: codes.join(', ') });
     return t.length > 900 ? T('waMany', { n: codes.length }) : t;
   }
+  /* Referencia que viaja a Stripe: código del pedido + códigos de las fotos (p. ej. AS-261121-ABCD_BAS005-BAS100).
+     Así el pago en Stripe dice qué fotos son aunque el correo del pedido no llegue. Stripe admite 200 caracteres
+     (letras, números, - y _); si no caben todas, se añade _MAS y el número de fotos que faltan. */
+  function payRef(ref, items) {
+    var codes = items.map(function (it) { return codeOf(it.s, it.n).replace(/[^A-Za-z0-9]/g, ''); }).sort(), out = ref, i;
+    for (i = 0; i < codes.length; i++) {
+      var next = out + (i ? '-' : '_') + codes[i], rest = codes.length - i - 1;
+      if (next.length + (rest ? 9 : 0) > 200) break;
+      out = next;
+    }
+    if (i < codes.length) out += '_MAS' + (codes.length - i);
+    return out;
+  }
   function payUrl(ref, totalC) {
     var p = payCfg(), tpl = String(p.enlace || '');
     if (!tpl) return '';
@@ -557,7 +570,7 @@
     L.push('PEDIDO ' + ref);
     L.push('Total: ' + (q.total / 100).toFixed(2).replace('.', ',') + ' EUR (IVA incluido)');
     if (p.modo === 'manual') L.push('Pago: PENDIENTE  →  el cliente debe pagar por Bizum a tu número (' + BIZUM + ') con el concepto ' + ref + '. Envía las fotos cuando veas el Bizum con exactamente este total. Si no puede usar Bizum, responde a este correo o escríbele por WhatsApp.');
-    else L.push('Pago: PENDIENTE DE COMPROBAR en ' + (p.proveedor || 'Stripe') + '  →  busca un cobro con la referencia ' + ref + ' por exactamente este total antes de enviar las fotos. Si no aparece cobrado, el cliente no ha pagado: no envíes nada.');
+    else L.push('Pago: PENDIENTE DE COMPROBAR en ' + (p.proveedor || 'Stripe') + '  →  busca un cobro con la referencia ' + ref + ' por exactamente este total antes de enviar las fotos (en Stripe, la referencia del cliente empieza por ' + ref + ' y lleva detrás los códigos de las fotos). Si no aparece cobrado, el cliente no ha pagado: no envíes nada.');
     L.push('Cliente: ' + name + ' <' + email + '>');
     L.push('Idioma de la web: ' + lang);
     L.push('');
@@ -620,7 +633,7 @@
       var q = quote(items, cat), ref = newRef(), p = payCfg(), consentAt = new Date().toISOString();
       var manual = p.modo === 'manual';
       if (p.modo !== 'enlace' && !manual) { try { localStorage.setItem(K_LAST, JSON.stringify({ ref: ref })); } catch (x2) {} showDone('demo', ref); return; }
-      var url = manual ? '' : payUrl(ref, q.total);
+      var url = manual ? '' : payUrl(payRef(ref, items), q.total);
       if (!manual && !url) { say(T('noPay'), true, true); return; }
 
       order.busy = true; btn.disabled = true; btn.setAttribute('aria-busy', 'true');
