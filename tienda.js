@@ -55,6 +55,7 @@
       factsWhat: 'Qué recibes', factsWhatT: 'Las fotos que elijas, en alta resolución (JPG) y sin marca de agua.',
       factsWhen: 'Cuándo', factsWhenT: 'Por correo electrónico, en un máximo de {h} horas desde que se confirme el pago.',
       factsUse: 'Uso', factsUseT: 'Personal y no comercial. Si necesitas otro uso, escríbeme antes.',
+      inappP: 'Estás en el navegador de {a}. Aquí puedes pagar con tarjeta, pero Google Pay y Apple Pay solo salen en tu navegador.', inappBtn: 'Abrir en Chrome', inappIOS: 'Para usarlos, toca los tres puntos (arriba a la derecha) y elige «Abrir en el navegador». Tus fotos elegidas se mantienen.', inappApp: 'esta app',
       factsPay: 'Pago', factsPayT: 'Con {m} en la página segura de {p}. Yo no veo ni guardo los datos de tu tarjeta.', payM0: 'tarjeta, Apple Pay o Google Pay', payM1: 'tarjeta, Apple Pay, Google Pay o Bizum',
       waLead: '¿Prefieres hablarlo por WhatsApp?', waBtn: 'Escríbeme por WhatsApp', waCart: 'Hola Alex, quiero estas fotos: {c}.', waMany: 'Hola Alex, quiero {n} fotos de tu web (te paso los números a continuación).', waDone: 'Hola Alex, acabo de hacer el pedido {r} en tu web.',
       factsPayM: 'Por Bizum al 639 762 752. Al enviar el pedido verás el importe exacto y el concepto que tienes que poner. En esta web no se cobra nada.', paySmallM: 'Después de enviar el pedido pagas por Bizum.',
@@ -94,6 +95,7 @@
       factsWhat: 'What you get', factsWhatT: 'The photos you choose, in full resolution (JPG) and without a watermark.',
       factsWhen: 'When', factsWhenT: 'By email, within {h} hours at most from the moment the payment is confirmed.',
       factsUse: 'Use', factsUseT: 'Personal and non-commercial. If you need another use, write to me first.',
+      inappP: 'You are in the {a} browser. You can pay by card here, but Google Pay and Apple Pay only show up in your own browser.', inappBtn: 'Open in Chrome', inappIOS: 'To use them, tap the three dots (top right) and choose “Open in browser”. Your chosen photos are kept.', inappApp: 'this app',
       factsPay: 'Payment', factsPayT: 'By {m} on {p}’s secure page. I never see or store your card details.', payM0: 'card, Apple Pay or Google Pay', payM1: 'card, Apple Pay, Google Pay or Bizum',
       waLead: 'Prefer to talk it over on WhatsApp?', waBtn: 'Message me on WhatsApp', waCart: 'Hi Alex, I would like these photos: {c}.', waMany: 'Hi Alex, I would like {n} photos from your website (I will send you the numbers next).', waDone: 'Hi Alex, I have just placed order {r} on your website.',
       factsPayM: 'By Bizum to 639 762 752. When you send the order you will see the exact amount and the reference to include. Nothing is charged on this website.', paySmallM: 'After you send the order you pay by Bizum.',
@@ -179,6 +181,48 @@
     });
     if (ok.length !== raw.length) cart.save(ok);
     return ok.map(function (x) { var p = x.split(':'); return { s: by[p[0]], n: +p[1] }; });
+  }
+
+  /* ---------- Navegadores dentro de apps (Instagram, Facebook, TikTok...) ----------
+     Ahí Google Pay y Apple Pay no funcionan (lo bloquea la app). Para que el cliente pueda abrir la página en su navegador
+     sin perder lo elegido, el carrito viaja también en la dirección (?c=sesion:1.5.20~otra:3). */
+  var UA = navigator.userAgent || '';
+  var IN_APP = /Instagram|FBAN|FBAV|FB_IAB|FBIOS|musical_ly|TikTok|BytedanceWebview|Snapchat|Twitter|LinkedInApp|Pinterest|Line\//i.test(UA);
+  var ANDROID = /Android/i.test(UA);
+  function appName() {
+    if (/Instagram/i.test(UA)) return 'Instagram';
+    if (/FBAN|FBAV|FB_IAB|FBIOS/i.test(UA)) return 'Facebook';
+    if (/musical_ly|TikTok|Bytedance/i.test(UA)) return 'TikTok';
+    return T('inappApp');
+  }
+  function withParam(url, key, val) {
+    var parts = url.split('#'), u = parts[0], h = parts.length > 1 ? '#' + parts.slice(1).join('#') : '';
+    u = u.replace(new RegExp('([?&])' + key + '=[^&]*&?'), '$1').replace(/[?&]$/, '');
+    if (val) u += (u.indexOf('?') > -1 ? '&' : '?') + key + '=' + encodeURIComponent(val);
+    return u + h;
+  }
+  function cartParam() {
+    var g = {}, order = [];
+    cart.list().forEach(function (x) { var p = x.split(':'); if (!g[p[0]]) { g[p[0]] = []; order.push(p[0]); } g[p[0]].push(p[1]); });
+    return order.map(function (id) { return id + ':' + g[id].join('.'); }).join('~');
+  }
+  function importCartParam() {
+    var m = location.search.match(/[?&]c=([^&#]*)/); if (!m) return;
+    var v = ''; try { v = decodeURIComponent(m[1]); } catch (e) { v = ''; }
+    var a = cart.list(), added = false;
+    v.split('~').forEach(function (grp) {
+      var p = grp.split(':'); if (!/^[a-z0-9-]+$/i.test(p[0] || '') || !p[1]) return;
+      p[1].split('.').forEach(function (n) { if (/^\d{1,5}$/.test(n)) { var k = p[0] + ':' + (+n); if (a.indexOf(k) < 0) { a.push(k); added = true; } } });
+    });
+    if (added) cart.save(a);
+    if (!IN_APP) syncCartUrl(true);
+  }
+  function syncCartUrl(strip) {
+    try {
+      if (!window.history || !history.replaceState) return;
+      var cur = location.pathname + location.search + location.hash, next = withParam(cur, 'c', strip ? '' : cartParam());
+      if (next !== cur) history.replaceState(history.state, '', next);
+    } catch (e) {}
   }
 
   /* ---------- Precio ---------- */
@@ -508,6 +552,15 @@
     $('pay').textContent = T('payBtn');
     var wl = $('wa-link');
     if (wl) { $('wa-lead').textContent = T('waLead'); wl.textContent = T('waBtn'); wl.setAttribute('href', waUrl(waCartText(items))); }
+    var ia = $('inapp');
+    if (IN_APP && p.modo === 'enlace') {
+      if (!ia) { ia = el('div', { 'class': 'inapp', id: 'inapp' }); var pr = document.querySelector('.pay-row'); if (pr) pr.parentNode.insertBefore(ia, pr); }
+      clear(ia); ia.appendChild(el('p', { text: T('inappP', { a: appName() }) }));
+      if (ANDROID) {
+        var here = location.host + withParam(location.pathname + location.search, 'c', cartParam());
+        ia.appendChild(el('a', { 'class': 'btn sm', href: 'intent://' + here + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent('https://' + here) + ';end', text: T('inappBtn'), 'data-inapp': '1' }));
+      } else ia.appendChild(el('p', { text: T('inappIOS') }));
+    } else if (ia) ia.parentNode.removeChild(ia);
     $('pay-small').textContent = p.modo === 'demo' ? '' : (p.modo === 'manual' ? T('paySmallM') : T('factsPayT', { p: p.proveedor || 'Stripe', m: T(p.bizumStripe ? 'payM1' : 'payM0') }));
   }
 
@@ -565,23 +618,24 @@
     window.scrollTo(0, 0);
   }
 
-  function buildMessage(ref, q, items, name, email, consentAt) {
-    var p = payCfg(), L = [];
-    L.push('PEDIDO ' + ref);
-    L.push('Total: ' + (q.total / 100).toFixed(2).replace('.', ',') + ' EUR (IVA incluido)');
-    if (p.modo === 'manual') L.push('Pago: PENDIENTE  →  el cliente debe pagar por Bizum a tu número (' + BIZUM + ') con el concepto ' + ref + '. Envía las fotos cuando veas el Bizum con exactamente este total. Si no puede usar Bizum, responde a este correo o escríbele por WhatsApp.');
-    else L.push('Pago: PENDIENTE DE COMPROBAR en ' + (p.proveedor || 'Stripe') + '  →  busca un cobro con la referencia ' + ref + ' por exactamente este total antes de enviar las fotos (en Stripe, la referencia del cliente empieza por ' + ref + ' y lleva detrás los códigos de las fotos). Si no aparece cobrado, el cliente no ha pagado: no envíes nada.');
-    L.push('Cliente: ' + name + ' <' + email + '>');
-    L.push('Idioma de la web: ' + lang);
-    L.push('');
+  /* Correo que te llega con cada pedido (por Web3Forms): corto, solo lo necesario. Cada campo sale como una fila. */
+  function eurES(c) { return (c / 100).toFixed(2).replace('.', ',') + ' €'; }
+  function orderFields(ref, q, items, name, email, consentAt) {
+    var p = payCfg(), f = {}, fotos = [];
     q.lines.forEach(function (l) {
-      var codes = items.filter(function (it) { return it.s.id === l.s.id; }).map(function (it) { return codeOf(l.s, it.n); }).sort();
-      L.push('SESIÓN: ' + titleOf(l.s) + ' (' + l.s.codigo + ') — ' + l.n + ' foto(s) — ' + (l.cost / 100).toFixed(2).replace('.', ',') + ' EUR' + (l.full ? '  [PRECIO DE SESIÓN COMPLETA: enviar TODAS las fotos de la sesión]' : ''));
-      L.push('  ' + codes.join(', '));
+      if (l.full) { fotos.push(titleOf(l.s) + ' COMPLETA (' + l.s.fotos + ' fotos)'); return; }
+      items.filter(function (it) { return it.s.id === l.s.id; }).map(function (it) { return codeOf(l.s, it.n); }).sort().forEach(function (c) { fotos.push(c); });
     });
-    L.push('');
-    L.push('Consentimientos aceptados (' + consentAt + '): condiciones de venta y política de privacidad (versión ' + ((cat.config && cat.config.version) || '') + '); entrega inmediata del contenido digital con pérdida del derecho de desistimiento.');
-    return L.join('\n');
+    var d = new Date(consentAt), two = function (n) { return ('0' + n).slice(-2); };
+    f['Fotos'] = fotos.join(', ');
+    f['Total'] = eurES(q.total);
+    f['Cliente'] = name;
+    f['email'] = email;
+    if (p.modo === 'manual') f['Pago'] = 'Bizum pendiente (concepto ' + ref + ')';
+    f['Pedido'] = ref;
+    if (lang === 'en') f['Idioma'] = 'inglés';
+    f['Aceptó'] = 'condiciones (v. ' + ((cat.config && cat.config.version) || '') + ') y entrega inmediata, ' + two(d.getDate()) + '/' + two(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + two(d.getHours()) + ':' + two(d.getMinutes());
+    return f;
   }
 
   function pageOrder() {
@@ -641,10 +695,9 @@
       var finished = false, ctl = ('AbortController' in window) ? new AbortController() : null, guard = 0;
       function end() { order.busy = false; btn.disabled = false; btn.removeAttribute('aria-busy'); btn.textContent = label; }
       guard = setTimeout(function () { if (finished) return; finished = true; try { if (ctl) ctl.abort(); } catch (x3) {} end(); say(T('unsure'), true, true); }, W3F.wait);
-      var body = {
-        access_key: W3F.key, subject: 'Pedido ' + ref + ' · ' + (q.total / 100).toFixed(2).replace('.', ',') + ' € · ' + name, from_name: 'Tienda alexsuarez.es',
-        name: name, email: email, message: buildMessage(ref, q, items, name, email, consentAt)
-      };
+      var body = { access_key: W3F.key, subject: 'Nuevo pedido de ' + name + ' · ' + q.count + (q.count === 1 ? ' foto' : ' fotos') + ' · ' + eurES(q.total), from_name: 'Tienda alexsuarez.es' };
+      var ff = orderFields(ref, q, items, name, email, consentAt);
+      for (var fk in ff) if (Object.prototype.hasOwnProperty.call(ff, fk)) body[fk] = ff[fk];
       fetch(W3F.url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(body), signal: ctl ? ctl.signal : undefined })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || j.success !== true) throw new Error('envio'); }); })
         .then(function () {
@@ -661,7 +714,7 @@
     });
   }
 
-  document.addEventListener('click', function (e) { var t = e.target; if (t && t.closest && t.closest('a[href^="https://wa.me/"]')) track('Clic WhatsApp tienda'); });
+  document.addEventListener('click', function (e) { var t = e.target; if (t && t.closest && t.closest('a[href^="https://wa.me/"]')) track('Clic WhatsApp tienda'); if (t && t.closest && t.closest('[data-inapp]')) track('Clic abrir en Chrome'); });
 
   /* ---------- Arranque ---------- */
   function boot() {
@@ -672,6 +725,8 @@
     loadJSON(CATALOG).then(function (c) {
       if (!c || !c.sesiones) throw new Error('catalogo'); cat = c;
       document.addEventListener('cartchange', refreshCartUI);
+      importCartParam();
+      if (IN_APP) { syncCartUrl(); document.addEventListener('cartchange', function () { syncCartUrl(); }); }
       if (PAGE === 'pedido') pageOrder(); else pageSesiones();
       refreshCartUI();
     }).catch(function () {

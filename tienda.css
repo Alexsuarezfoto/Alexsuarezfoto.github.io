@@ -183,6 +183,8 @@ h2 { margin: 0; font-weight: 600; font-size: clamp(20px, 2.2vw, 26px); line-heig
 .check input[aria-invalid="true"] { border-color: var(--rec); box-shadow: 0 0 0 3px rgba(229, 56, 43, .25); }
 .check a { color: var(--ink); }
 .pay-row { display: grid; gap: 10px; justify-items: stretch; }
+.inapp { display: grid; gap: 10px; justify-items: start; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--r-md); font-size: 14px; line-height: 1.5; color: var(--muted); }
+.inapp p { margin: 0; }
 .pay-row .small { margin: 0; font-size: 13px; line-height: 1.5; color: var(--muted); text-align: center; }
 .wa-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 14px; margin-top: 4px; font-size: 14px; line-height: 1.4; color: var(--muted); text-align: center; }
 .done-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
