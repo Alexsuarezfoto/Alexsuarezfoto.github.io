@@ -15,7 +15,7 @@
 
   var CATALOG = 'sesiones/sesiones.json';
   var K_CART = 'carrito', K_LAST = 'ultimoPedido', K_LANG = 'idioma';
-  var MAIL = 'fotoalex.raw@gmail.com';
+  var MAIL = 'fotoalex.raw@gmail.com', WA = '34639762752';
   var W3F = { url: 'https://api.web3forms.com/submit', key: '7febc7c0-d3ac-42be-8892-b76277c08562', wait: 25000 };
   var PAY_OK = /^https:\/\/(buy\.stripe\.com|checkout\.stripe\.com|(www\.)?paypal\.com|(www\.)?paypal\.me)\//i;
   var PAGE = document.body.getAttribute('data-page');
@@ -56,6 +56,7 @@
       factsWhen: 'Cuándo', factsWhenT: 'Por correo electrónico, en un máximo de {h} horas desde que se confirme el pago.',
       factsUse: 'Uso', factsUseT: 'Personal y no comercial. Si necesitas otro uso, escríbeme antes.',
       factsPay: 'Pago', factsPayT: 'En la página segura de {p}. Yo no veo ni guardo los datos de tu tarjeta.',
+      waLead: '¿Prefieres hablarlo por WhatsApp?', waBtn: 'Escríbeme por WhatsApp', waCart: 'Hola Alex, quiero estas fotos: {c}.', waMany: 'Hola Alex, quiero {n} fotos de tu web (te paso los números a continuación).', waDone: 'Hola Alex, acabo de hacer el pedido {r} en tu web.',
       factsPayM: 'Al enviar el pedido te escribo por correo con las instrucciones de pago. En esta web no se cobra nada.', paySmallM: 'Después te escribo con las instrucciones de pago.',
       manualT: 'Pedido recibido', manualP: 'Te escribo en breve a {e} con las instrucciones de pago. Cuando el pago esté confirmado, te envío las fotos por correo en un máximo de {h} horas. Si no ves mi mensaje, mira la carpeta de spam o escríbeme a',
       factsWith: 'Desistimiento', factsWithT: 'Al pedir la entrega inmediata de contenido digital pierdes el derecho de desistimiento (14 días). Está explicado en las condiciones de venta.'
@@ -93,6 +94,7 @@
       factsWhen: 'When', factsWhenT: 'By email, within {h} hours at most from the moment the payment is confirmed.',
       factsUse: 'Use', factsUseT: 'Personal and non-commercial. If you need another use, write to me first.',
       factsPay: 'Payment', factsPayT: 'On {p}’s secure page. I never see or store your card details.',
+      waLead: 'Prefer to talk it over on WhatsApp?', waBtn: 'Message me on WhatsApp', waCart: 'Hi Alex, I would like these photos: {c}.', waMany: 'Hi Alex, I would like {n} photos from your website (I will send you the numbers next).', waDone: 'Hi Alex, I have just placed order {r} on your website.',
       factsPayM: 'When you send the order I write to you by email with the payment instructions. Nothing is charged on this website.', paySmallM: 'Afterwards I write to you with the payment instructions.',
       manualT: 'Order received', manualP: 'I will write to you shortly at {e} with the payment instructions. Once the payment is confirmed, I will email you the photos within {h} hours at most. If you do not see my message, check your spam folder or write to me at',
       factsWith: 'Right of withdrawal', factsWithT: 'By asking for immediate delivery of digital content you lose the right of withdrawal (14 days). It is explained in the terms of sale.'
@@ -261,7 +263,7 @@
     t.forEach(function (x, i) {
       var next = t[i + 1], range;
       if (!next) range = T('tierMore', { a: x.min });
-      else if (next.min - 1 === x.min) range = T('tierRange1', { a: x.min });
+      else if (next.min - 1 === x.min) range = photosText(x.min);
       else range = T('tierRange', { a: x.min, b: next.min - 1 });
       ul.appendChild(el('li', null, [range + ' · ', el('b', { text: money(x.c, true) })]));
     });
@@ -428,6 +430,12 @@
     return tpl.split('{ref}').join(encodeURIComponent(ref)).split('{totalCents}').join(String(totalC))
       .split('{total}').join((totalC / 100).toFixed(2)).split('{lang}').join(lang);
   }
+  function waUrl(text) { return 'https://wa.me/' + WA + '?text=' + encodeURIComponent(text); }
+  function waCartText(items) {
+    var codes = items.map(function (it) { return codeOf(it.s, it.n); }).sort();
+    var t = T('waCart', { c: codes.join(', ') });
+    return t.length > 900 ? T('waMany', { n: codes.length }) : t;
+  }
   function payUrl(ref, totalC) {
     var p = payCfg(), tpl = String(p.enlace || '');
     if (!tpl) return '';
@@ -483,6 +491,8 @@
       facts.appendChild(el('li', null, [el('b', { text: T(k[0]) + ': ' }), T(k[1], { h: hours(), p: p.proveedor || 'Stripe' })]));
     });
     $('pay').textContent = T('payBtn');
+    var wl = $('wa-link');
+    if (wl) { $('wa-lead').textContent = T('waLead'); wl.textContent = T('waBtn'); wl.setAttribute('href', waUrl(waCartText(items))); }
     $('pay-small').textContent = p.modo === 'demo' ? '' : (p.modo === 'manual' ? T('paySmallM') : T('factsPayT', { p: p.proveedor || 'Stripe' }));
   }
 
@@ -502,8 +512,10 @@
       box.appendChild(para);
     }
     if (ref) box.appendChild(el('div', { 'class': 'ref', text: T('refLbl') + ' ' + ref }));
-    box.appendChild(document.createElement('br'));
-    box.appendChild(el('a', { 'class': 'btn solid', href: 'sesiones.html', text: T('back') }));
+    var acts = el('div', { 'class': 'done-actions' });
+    if (kind !== 'demo') acts.appendChild(el('a', { 'class': 'btn', href: waUrl(T('waDone', { r: ref || '' })), target: '_blank', rel: 'noopener', 'data-wa': '1', text: T('waBtn') }));
+    acts.appendChild(el('a', { 'class': 'btn solid', href: 'sesiones.html', text: T('back') }));
+    box.appendChild(acts);
     d.appendChild(box);
     try { d.setAttribute('tabindex', '-1'); d.focus({ preventScroll: true }); } catch (e) {}
     window.scrollTo(0, 0);
@@ -604,6 +616,8 @@
         .catch(function () { if (finished) return; finished = true; clearTimeout(guard); end(); say(T('fail'), true, true); });
     });
   }
+
+  document.addEventListener('click', function (e) { var t = e.target; if (t && t.closest && t.closest('a[href^="https://wa.me/"]')) track('Clic WhatsApp tienda'); });
 
   /* ---------- Arranque ---------- */
   function boot() {

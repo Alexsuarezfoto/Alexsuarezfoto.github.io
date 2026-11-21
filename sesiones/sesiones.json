@@ -1,10 +1,10 @@
 {
-  "_ayuda": "Catálogo de la tienda de fotos. Los precios y el modo de pago de abajo son DE EJEMPLO: cámbialos antes de abrir la tienda. Más información en LEEME.txt (sección TIENDA DE FOTOS).",
+  "_ayuda": "Catálogo de la tienda de fotos: precios, modo de pago y lista de sesiones. Más información en LEEME.txt (sección TIENDA DE FOTOS).",
   "config": {
     "tramos": [
-      { "min": 1, "precio": 10 },
-      { "min": 3, "precio": 8 },
-      { "min": 6, "precio": 6 }
+      { "min": 1, "precio": 6.5 },
+      { "min": 3, "precio": 5 },
+      { "min": 4, "precio": 4.5 }
     ],
     "_tramos": "Precio por foto según cuántas fotos hay en el pedido (todas las sesiones juntas). 'min' = desde cuántas fotos, 'precio' = euros por foto, IVA incluido.",
     "entregaHoras": 24,
@@ -28,7 +28,7 @@
       "fecha": "2026-11-20",
       "listada": true,
       "fotos": 252,
-      "portada": 1
+      "portada": 107
     },
     {
       "id": "ejemplo",
@@ -39,8 +39,7 @@
       "listada": false,
       "demo": true,
       "fotos": 8,
-      "portada": 1,
-      "completa": { "precio": 40 }
+      "portada": 1
     }
   ]
 }

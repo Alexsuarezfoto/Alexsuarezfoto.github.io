@@ -147,7 +147,21 @@ h2 { font-family: var(--font); font-weight: 600; font-size: clamp(26px, 3.4vw, 4
 .menu a { position: relative; display: inline-block; padding: 7px 15px; border-radius: 10px; font-size: 16px; font-weight: 500; color: rgba(236, 232, 225, .8); text-shadow: 0 1px 8px rgba(0, 0, 0, .3); text-decoration: none; transition: color .2s, background .25s, transform .3s cubic-bezier(.3, 1.4, .5, 1); }
 .menu a:hover, .menu a:focus-visible { color: var(--ink); background: rgba(236, 232, 225, .11); transform: scale(1.07); }
 .menu a.is-current { color: var(--ink); }
-.menu a.is-current::after { content: ""; position: absolute; left: 50%; bottom: 1px; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--rec); }
+.menu a.is-current::after, .dd-btn.is-current::after { content: ""; position: absolute; left: 50%; bottom: 1px; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--rec); }
+/* Desplegable «Fotos»: Portfolio y Busca tu foto (la tienda de sesiones) */
+.dd { position: relative; }
+.dd-btn { position: relative; display: inline-flex; align-items: center; gap: 4px; margin: 0; padding: 7px 11px 7px 15px; border: 0; border-radius: 10px; background: transparent; font-family: var(--font); font-size: 16px; font-weight: 500; line-height: inherit; color: rgba(236, 232, 225, .8); text-shadow: 0 1px 8px rgba(0, 0, 0, .3); cursor: pointer; transition: color .2s, background .25s, transform .3s cubic-bezier(.3, 1.4, .5, 1); }
+.dd-btn:hover, .dd-btn:focus-visible, .dd-btn[aria-expanded="true"] { color: var(--ink); background: rgba(236, 232, 225, .11); }
+.dd-btn:hover { transform: scale(1.07); }
+.dd-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.dd-btn.is-current { color: var(--ink); }
+.dd-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s; }
+.dd-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+.dd-list { position: absolute; z-index: 7; top: calc(100% + 10px); left: 50%; transform: translateX(-50%); min-width: 190px; display: flex; flex-direction: column; padding: 6px; border-radius: var(--r-md); background: rgba(22, 26, 29, .86); border: 1px solid var(--glass-line); -webkit-backdrop-filter: blur(24px) saturate(1.6); backdrop-filter: blur(24px) saturate(1.6); box-shadow: var(--glass-edge), 0 18px 40px rgba(0, 0, 0, .45); }
+.dd-list[hidden] { display: none; }
+.menu .dd-list a { display: block; padding: 11px 14px; font-size: 16px; white-space: nowrap; text-shadow: none; }
+.menu .dd-list a:hover, .menu .dd-list a:focus-visible { transform: none; background: rgba(236, 232, 225, .1); }
+.menu .dd-list a.is-current::after { display: none; }
 .hdr-right { display: flex; align-items: center; gap: 8px; margin-left: 6px; }
 .hdr-right .btn.sm { min-height: 44px; }
 .hdr-ig { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-md); color: rgba(236, 232, 225, .88); transition: color .2s, background .25s, border-color .25s, transform .3s cubic-bezier(.3, 1.4, .5, 1); }
@@ -170,6 +184,7 @@ h2 { font-family: var(--font); font-weight: 600; font-size: clamp(26px, 3.4vw, 4
 .nav-panel[hidden] { display: none; }
 .nav-panel a { display: block; padding: 13px 14px; border-radius: 10px; font-size: 17px; font-weight: 500; color: var(--ink); text-decoration: none; }
 .nav-panel a:hover, .nav-panel a:active { background: rgba(236, 232, 225, .1); }
+.nav-panel a.sub { padding: 9px 14px 9px 30px; font-size: 16px; font-weight: 400; color: rgba(236, 232, 225, .8); }
 .nav-panel i { display: block; height: 1px; margin: 4px 10px; background: var(--line); }
 @media (min-width: 761px) { .nav-panel { display: none !important; } }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -632,7 +647,13 @@ html.paused .rec i { animation: none; }
     <a class="brand" href="#inicio" aria-label="Alex Suárez, ir al inicio" data-en-aria-label="Alex Suárez, back to top"><span class="brand-name">Alex Suárez</span></a>
     <nav class="menu" aria-label="Secciones" data-en-aria-label="Sections">
       <a href="#trabajos" data-en="Work">Trabajos</a>
-      <a href="#fotos" data-en="Photos">Fotos</a>
+      <div class="dd">
+        <button class="dd-btn" id="dd-fotos-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="dd-fotos-list"><span data-en="Photos">Fotos</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></button>
+        <div class="dd-list" id="dd-fotos-list" hidden>
+          <a href="#fotos" data-en="Portfolio">Portfolio</a>
+          <a href="sesiones.html" data-sesiones data-en="Find your photo">Busca tu foto</a>
+        </div>
+      </div>
       <a href="#sobre-mi" data-en="About">Sobre mí</a>
     </nav>
     <div class="hdr-right">
@@ -644,6 +665,7 @@ html.paused .rec i { animation: none; }
     <nav class="nav-panel" id="nav-panel" hidden aria-label="Secciones" data-en-aria-label="Sections">
       <a href="#trabajos" data-en="Work">Trabajos</a>
       <a href="#fotos" data-en="Photos">Fotos</a>
+      <a class="sub" href="sesiones.html" data-sesiones data-en="Find your photo">Busca tu foto</a>
       <a href="#sobre-mi" data-en="About">Sobre mí</a>
       <a href="#contacto" data-en="Contact">Contacto</a>
       <i aria-hidden="true"></i>
@@ -998,6 +1020,23 @@ html.paused .rec i { animation: none; }
   var f = first(); if (f !== 'es') L.set(f, false);
 })();
 
+/* Desplegable «Fotos» del menú (escritorio): se abre al pulsar o al pasar el ratón, se cierra al pulsar fuera, con Escape o al elegir */
+(function () {
+  var b = document.getElementById('dd-fotos-btn'), l = document.getElementById('dd-fotos-list'); if (!b || !l) return;
+  var wrap = b.parentNode, timer = 0, pinned = false, canHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  function open(v) { l.hidden = !v; b.setAttribute('aria-expanded', v ? 'true' : 'false'); if (!v) pinned = false; }
+  /* Pulsar: si se abrió solo al pasar el ratón, se queda abierto; si ya estaba fijado, se cierra. */
+  b.addEventListener('click', function (e) { e.stopPropagation(); if (l.hidden) { open(true); pinned = true; } else if (!pinned && canHover) { pinned = true; } else { open(false); } });
+  if (canHover) {
+    wrap.addEventListener('mouseenter', function () { clearTimeout(timer); open(true); });
+    wrap.addEventListener('mouseleave', function () { if (pinned) return; timer = setTimeout(function () { open(false); }, 180); });
+  }
+  l.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('a')) open(false); });
+  document.addEventListener('click', function (e) { if (!l.hidden && !wrap.contains(e.target)) open(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !l.hidden) { open(false); b.focus(); } });
+  window.addEventListener('scroll', function () { if (!l.hidden) open(false); }, { passive: true });
+})();
+
 /* Menú del móvil: botón en la cabecera que abre la lista de secciones */
 (function () {
   var b = document.getElementById('nav-toggle'), p = document.getElementById('nav-panel'); if (!b || !p) return;
@@ -1114,7 +1153,7 @@ html.paused .rec i { animation: none; }
   var menuLinks = $$('.menu a');
   if ('IntersectionObserver' in window && menuLinks.length) {
     var spy = new IntersectionObserver(function (es) {
-      es.forEach(function (en) { if (en.isIntersecting) menuLinks.forEach(function (a) { a.classList.toggle('is-current', a.getAttribute('href') === '#' + en.target.id); }); });
+      es.forEach(function (en) { if (en.isIntersecting) { menuLinks.forEach(function (a) { a.classList.toggle('is-current', a.getAttribute('href') === '#' + en.target.id); }); var ddb = $('.dd-btn'); if (ddb) ddb.classList.toggle('is-current', en.target.id === 'fotos'); } });
     }, { rootMargin: '-45% 0px -50% 0px' });
     $$('main > section').forEach(function (sec) { spy.observe(sec); });
   }
@@ -1548,7 +1587,7 @@ html.paused .rec i { animation: none; }
 
 /* Estadísticas (Umami, sin cookies). Si Umami no carga (bloqueador de anuncios, sin conexión) la web funciona igual.
    Eventos que se registran: "Sección …" (una sección estuvo en pantalla al menos 1 s), "Foto abierta", "Vídeo abierto",
-   "Clic Instagram", "Clic WhatsApp", "Clic Teléfono" y "Formulario enviado" (solo cuando el mensaje ha salido de verdad). No se guarda nada personal. */
+   "Clic Instagram", "Clic WhatsApp", "Clic Teléfono", "Clic Busca tu foto" (menú) y "Formulario enviado" (solo cuando el mensaje ha salido de verdad). No se guarda nada personal. */
 (function () {
   var q = [], poll = 0, tries = 0;
   function flush() {
@@ -1586,6 +1625,7 @@ html.paused .rec i { animation: none; }
     if (o) { var w = o.closest('.work'); track('Vídeo abierto', { titulo: (w && w.getAttribute('data-title')) || '' }); return; }
     if (t.closest('a[href^="https://wa.me/"]')) { track('Clic WhatsApp'); return; }
     if (t.closest('a[href^="tel:"]')) { track('Clic Teléfono'); return; }
+    if (t.closest('a[data-sesiones]')) { track('Clic Busca tu foto'); return; }
     var a = t.closest('a[href*="instagram.com"]');
     if (a) { var m = (a.getAttribute('href') || '').match(/instagram\.com\/([^/?#]+)/); track('Clic Instagram', { perfil: m ? m[1] : '' }); }
   }, true);
