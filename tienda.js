@@ -6,8 +6,8 @@
    - Precio = según cuántas fotos hay en el pedido (tramos). Si una sesión tiene "completa", nunca se paga más que ese precio.
    - Pago: en modo "demo" no se cobra ni se envía nada. En modo "enlace" el pedido te llega por correo (Web3Forms, el mismo que el
      formulario de contacto) y el comprador pasa a la página de pago de Stripe o PayPal. En esta web NO se carga ningún script de pago.
-     En modo "manual" el pedido te llega igual por correo, pero no hay redirección: tú escribes al cliente con las instrucciones de
-     pago y le envías las fotos cuando hayas cobrado.
+     En modo "manual" el pedido te llega igual por correo, pero no hay redirección: la web muestra al cliente tu número de Bizum
+     (constante BIZUM, arriba), el importe y el código del pedido como concepto; tú envías las fotos cuando veas el Bizum.
    - "fotosBase" (en sesiones.json > config): carpeta o dirección donde están las fotos, si no están junto a la web (p. ej. "fotos/").
    Todo está escrito sin dependencias, para que funcione también en los navegadores internos (Instagram, etc.). */
 (function () {
@@ -15,7 +15,7 @@
 
   var CATALOG = 'sesiones/sesiones.json';
   var K_CART = 'carrito', K_LAST = 'ultimoPedido', K_LANG = 'idioma';
-  var MAIL = 'fotoalex.raw@gmail.com', WA = '34639762752';
+  var MAIL = 'fotoalex.raw@gmail.com', WA = '34639762752', BIZUM = '639 762 752';
   var W3F = { url: 'https://api.web3forms.com/submit', key: '7febc7c0-d3ac-42be-8892-b76277c08562', wait: 25000 };
   var PAY_OK = /^https:\/\/(buy\.stripe\.com|checkout\.stripe\.com|(www\.)?paypal\.com|(www\.)?paypal\.me)\//i;
   var PAGE = document.body.getAttribute('data-page');
@@ -57,8 +57,9 @@
       factsUse: 'Uso', factsUseT: 'Personal y no comercial. Si necesitas otro uso, escríbeme antes.',
       factsPay: 'Pago', factsPayT: 'En la página segura de {p}. Yo no veo ni guardo los datos de tu tarjeta.',
       waLead: '¿Prefieres hablarlo por WhatsApp?', waBtn: 'Escríbeme por WhatsApp', waCart: 'Hola Alex, quiero estas fotos: {c}.', waMany: 'Hola Alex, quiero {n} fotos de tu web (te paso los números a continuación).', waDone: 'Hola Alex, acabo de hacer el pedido {r} en tu web.',
-      factsPayM: 'Al enviar el pedido te escribo por correo con las instrucciones de pago. En esta web no se cobra nada.', paySmallM: 'Después te escribo con las instrucciones de pago.',
-      manualT: 'Pedido recibido', manualP: 'Te escribo en breve a {e} con las instrucciones de pago. Cuando el pago esté confirmado, te envío las fotos por correo en un máximo de {h} horas. Si no ves mi mensaje, mira la carpeta de spam o escríbeme a',
+      factsPayM: 'Por Bizum al 639 762 752. Al enviar el pedido verás el importe exacto y el concepto que tienes que poner. En esta web no se cobra nada.', paySmallM: 'Después de enviar el pedido pagas por Bizum.',
+      manualT: 'Pedido recibido', manualP: 'Haz ahora el pago por Bizum con los datos de abajo. En cuanto lo vea, te envío las fotos por correo a {e} en un máximo de {h} horas. Si no te llegan, mira la carpeta de spam o escríbeme a',
+      bizumTo: 'Bizum al', bizumAmt: 'Importe', bizumConcept: 'Concepto', bizumCopy: 'Copiar número', bizumCopied: 'Número copiado', bizumAlt: 'Si no puedes pagar por Bizum, escríbeme por WhatsApp y vemos otra forma.',
       factsWith: 'Desistimiento', factsWithT: 'Al pedir la entrega inmediata de contenido digital pierdes el derecho de desistimiento (14 días). Está explicado en las condiciones de venta.'
     },
     en: {
@@ -95,8 +96,9 @@
       factsUse: 'Use', factsUseT: 'Personal and non-commercial. If you need another use, write to me first.',
       factsPay: 'Payment', factsPayT: 'On {p}’s secure page. I never see or store your card details.',
       waLead: 'Prefer to talk it over on WhatsApp?', waBtn: 'Message me on WhatsApp', waCart: 'Hi Alex, I would like these photos: {c}.', waMany: 'Hi Alex, I would like {n} photos from your website (I will send you the numbers next).', waDone: 'Hi Alex, I have just placed order {r} on your website.',
-      factsPayM: 'When you send the order I write to you by email with the payment instructions. Nothing is charged on this website.', paySmallM: 'Afterwards I write to you with the payment instructions.',
-      manualT: 'Order received', manualP: 'I will write to you shortly at {e} with the payment instructions. Once the payment is confirmed, I will email you the photos within {h} hours at most. If you do not see my message, check your spam folder or write to me at',
+      factsPayM: 'By Bizum to 639 762 752. When you send the order you will see the exact amount and the reference to include. Nothing is charged on this website.', paySmallM: 'After you send the order you pay by Bizum.',
+      manualT: 'Order received', manualP: 'Now make the payment by Bizum using the details below. As soon as I see it, I will email the photos to {e} within {h} hours at most. If they do not arrive, check your spam folder or write to me at',
+      bizumTo: 'Bizum to', bizumAmt: 'Amount', bizumConcept: 'Reference', bizumCopy: 'Copy number', bizumCopied: 'Number copied', bizumAlt: 'Cannot use Bizum? Message me on WhatsApp and we will find another way.',
       factsWith: 'Right of withdrawal', factsWithT: 'By asking for immediate delivery of digital content you lose the right of withdrawal (14 days). It is explained in the terms of sale.'
     }
   };
@@ -496,7 +498,20 @@
     $('pay-small').textContent = p.modo === 'demo' ? '' : (p.modo === 'manual' ? T('paySmallM') : T('factsPayT', { p: p.proveedor || 'Stripe' }));
   }
 
-  function showDone(kind, ref, email) {
+  function copyText(s, done) {
+    function legacy() {
+      try {
+        var t = document.createElement('textarea'); t.value = s; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+        document.body.appendChild(t); t.select(); var ok = document.execCommand('copy'); document.body.removeChild(t); if (ok) done();
+      } catch (e2) {}
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(s).then(done, legacy); return; }
+    } catch (e) {}
+    legacy();
+  }
+
+  function showDone(kind, ref, email, total) {
     $('view-empty').hidden = true; $('view-order').hidden = true; $('demo-note').hidden = kind !== 'demo';
     var d = $('view-done'); d.hidden = false; clear(d);
     var p = payCfg(), box = el('div', { 'class': 'done' });
@@ -506,13 +521,29 @@
       var pm = el('p', { text: T('manualP', { h: hours(), e: email || '' }) + ' ' });
       pm.appendChild(el('a', { href: 'mailto:' + MAIL, text: MAIL })); pm.appendChild(document.createTextNode('.'));
       box.appendChild(pm);
+      if (total != null) {
+        var bz = el('dl', { 'class': 'bizum' });
+        [[T('bizumTo'), BIZUM], [T('bizumAmt'), money(total)], [T('bizumConcept'), ref || '']].forEach(function (r) {
+          bz.appendChild(el('div', null, [el('dt', { text: r[0] }), el('dd', { text: r[1] })]));
+        });
+        box.appendChild(bz);
+        box.appendChild(el('p', { 'class': 'bizum-alt', text: T('bizumAlt') }));
+      }
     } else {
       var para = el('p', { text: T('paidP', { h: hours() }) + ' ' });
       para.appendChild(el('a', { href: 'mailto:' + MAIL, text: MAIL })); para.appendChild(document.createTextNode('.'));
       box.appendChild(para);
     }
-    if (ref) box.appendChild(el('div', { 'class': 'ref', text: T('refLbl') + ' ' + ref }));
+    if (ref && !(kind === 'manual' && total != null)) box.appendChild(el('div', { 'class': 'ref', text: T('refLbl') + ' ' + ref }));
     var acts = el('div', { 'class': 'done-actions' });
+    if (kind === 'manual' && total != null) {
+      var cb = el('button', { 'class': 'btn', type: 'button', text: T('bizumCopy') });
+      cb.addEventListener('click', function () {
+        track('Clic copiar Bizum');
+        copyText(BIZUM.replace(/\s/g, ''), function () { cb.textContent = T('bizumCopied'); setTimeout(function () { cb.textContent = T('bizumCopy'); }, 2000); });
+      });
+      acts.appendChild(cb);
+    }
     if (kind !== 'demo') acts.appendChild(el('a', { 'class': 'btn', href: waUrl(T('waDone', { r: ref || '' })), target: '_blank', rel: 'noopener', 'data-wa': '1', text: T('waBtn') }));
     acts.appendChild(el('a', { 'class': 'btn solid', href: 'sesiones.html', text: T('back') }));
     box.appendChild(acts);
@@ -525,7 +556,7 @@
     var p = payCfg(), L = [];
     L.push('PEDIDO ' + ref);
     L.push('Total: ' + (q.total / 100).toFixed(2).replace('.', ',') + ' EUR (IVA incluido)');
-    if (p.modo === 'manual') L.push('Pago: PENDIENTE  →  escribe al cliente (responde a este correo) con las instrucciones de pago y envía las fotos cuando hayas cobrado exactamente este total.');
+    if (p.modo === 'manual') L.push('Pago: PENDIENTE  →  el cliente debe pagar por Bizum a tu número (' + BIZUM + ') con el concepto ' + ref + '. Envía las fotos cuando veas el Bizum con exactamente este total. Si no puede usar Bizum, responde a este correo o escríbele por WhatsApp.');
     else L.push('Pago: ' + (p.proveedor || '—') + '  →  comprueba que el importe cobrado coincide con este total antes de enviar las fotos.');
     L.push('Cliente: ' + name + ' <' + email + '>');
     L.push('Idioma de la web: ' + lang);
@@ -607,8 +638,8 @@
           if (finished) return; finished = true; clearTimeout(guard);
           track('Pedido iniciado', { fotos: q.count, total: Math.round(q.total / 100) });
           if (manual) {
-            view = function () { showDone('manual', ref, email); };
-            end(); showDone('manual', ref, email); cart.clear(); refreshCartUI(); return;
+            view = function () { showDone('manual', ref, email, q.total); };
+            end(); showDone('manual', ref, email, q.total); cart.clear(); refreshCartUI(); return;
           }
           try { localStorage.setItem(K_LAST, JSON.stringify({ ref: ref })); } catch (x4) {}
           say(T('redirecting')); setTimeout(function () { location.assign(url); }, 400);
