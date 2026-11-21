@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- La tienda NO sale en Google (así las fotos de las personas no se indexan): deja esta línea siempre. Mientras no la enlaces desde el menú de la web, además queda oculta; para abrirla al público basta con enlazarla en el menú (dímelo y lo hago). -->
+<meta name="robots" content="noindex, follow">
+<title>Sesiones · Alex Suárez</title>
+<meta name="theme-color" content="#0e1113">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230e1113'/%3E%3Ctext x='16' y='23' font-family='Arial,Helvetica,sans-serif' font-weight='700' font-size='20' text-anchor='middle' fill='%23ece8e1'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="fonts/albert-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="tienda.css">
+<script>
+/* Elige el idioma antes de pintar: ?lang=es|en, si no el que eligió el visitante en la web, si no el del navegador */
+(function () {
+  var l = (location.search.match(/[?&]lang=(es|en)\b/) || [])[1], s = null;
+  try { s = localStorage.getItem('idioma'); } catch (e) {}
+  if (!l) l = (s === 'es' || s === 'en') ? s : (/^en\b/i.test(navigator.language || '') ? 'en' : 'es');
+  document.documentElement.lang = l;
+})();
+</script>
+<!-- Estadísticas de visitas: Umami Cloud (sin cookies). Solo cuenta en alexsuarez.es, no en pruebas locales. -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="496132da-e026-4dab-b417-7681883feb89" data-domains="alexsuarez.es,www.alexsuarez.es"></script>
+</head>
+<body data-page="sesiones">
+
+<header class="shop-top">
+  <div class="wrap bar">
+    <a class="brand" href="index.html" aria-label="Alex Suárez, volver a la web" data-en-aria-label="Alex Suárez, back to the site">Alex Suárez</a>
+    <div class="lang" role="group" aria-label="Idioma / Language"><button type="button" data-lang="es" lang="es" aria-pressed="true" title="Español">ES</button><button type="button" data-lang="en" lang="en" aria-pressed="false" title="English">EN</button></div>
+    <a class="btn solid cart-btn" id="cart-btn" href="pedido.html" aria-label="Carrito" data-en-aria-label="Cart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8zM9 8V7a3 3 0 0 1 6 0v1"/></svg><span class="txt" data-en="Cart">Carrito</span><span class="n" id="cart-n" hidden></span></a>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <div id="view" aria-live="polite"></div>
+  <noscript><p class="notice"><span class="es">Esta sección necesita JavaScript para mostrar las fotos y el carrito.</span><span class="en">This section needs JavaScript to show the photos and the cart.</span></p></noscript>
+</main>
+
+<div class="cartbar" id="cartbar" hidden role="region" aria-label="Pedido" data-en-aria-label="Order">
+  <div class="sum"><b id="cb-sum"></b><span id="cb-sub"></span></div>
+  <button class="link" id="cb-clear" type="button"></button>
+  <button class="btn solid" id="cb-go" type="button"></button>
+</div>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Visor de fotos">
+  <div class="lb-top"><span class="lb-code" id="lb-code"></span><button class="btn sm" id="lb-close" type="button">Cerrar ×</button></div>
+  <div class="lb-stage" id="lb-stage">
+    <button class="lb-nav lb-prev" id="lb-prev" type="button" aria-label="Anterior">←</button>
+    <img id="lb-img" alt="">
+    <button class="lb-nav lb-next" id="lb-next" type="button" aria-label="Siguiente">→</button>
+  </div>
+  <div class="lb-bot"><button class="btn solid" id="lb-toggle" type="button" aria-pressed="false"></button><p class="lb-hint" id="lb-hint"></p></div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span class="mono">Alex Suárez · A Coruña</span>
+    <span class="foot-legal"><a class="mono" href="legal.html#aviso-legal" data-en="Legal notice">Aviso legal</a><a class="mono" href="legal.html#privacidad" data-en="Privacy">Privacidad</a><a class="mono" href="legal.html#condiciones" data-en="Terms of sale">Condiciones de venta</a><a class="mono" href="legal.html#cookies" data-en="Cookies">Cookies</a></span>
+    <span class="mono">© 2026</span>
+  </div>
+</footer>
+
+<script src="tienda.js"></script>
+</body>
+</html>

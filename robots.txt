@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /fotos/
+Disallow: /sesiones/
 
 Sitemap: https://alexsuarez.es/sitemap.xml
